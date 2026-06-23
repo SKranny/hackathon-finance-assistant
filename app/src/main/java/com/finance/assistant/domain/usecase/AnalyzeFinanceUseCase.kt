@@ -5,7 +5,7 @@ import com.finance.assistant.data.repository.InsightRepository
 import com.finance.assistant.data.repository.TransactionRepository
 import com.finance.assistant.domain.model.FinancialInsight
 import com.finance.assistant.service.CalendarScanner
-import com.finance.assistant.service.SmsScanner
+import com.finance.assistant.service.TransactionScanner
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
@@ -14,7 +14,7 @@ class AnalyzeFinanceUseCase @Inject constructor(
     private val transactionRepository: TransactionRepository,
     private val insightRepository: InsightRepository,
     private val calendarScanner: CalendarScanner,
-    private val smsScanner: SmsScanner,
+    private val transactionScanner: TransactionScanner,
 ) {
 
     suspend operator fun invoke(): Result<List<FinancialInsight>> =
@@ -23,7 +23,7 @@ class AnalyzeFinanceUseCase @Inject constructor(
                 aiModelManager.loadModel().getOrThrow()
             }
 
-            val smsTransactions = smsScanner.scanFinanceMessages()
+            val smsTransactions = transactionScanner.scanSmsTransactions()
             transactionRepository.insertAll(smsTransactions)
 
             val calendarEvents = calendarScanner.scanUpcomingEvents()

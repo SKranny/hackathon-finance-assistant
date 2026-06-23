@@ -3,12 +3,12 @@ package com.finance.assistant.domain.usecase
 import com.finance.assistant.data.repository.CaseRepository
 import com.finance.assistant.data.repository.ExpenseRepository
 import com.finance.assistant.data.repository.UserRepository
-import com.finance.assistant.domain.model.case.CaseSeverity
-import com.finance.assistant.domain.model.case.CashGapCase
-import com.finance.assistant.domain.model.case.FinanceCase
-import com.finance.assistant.domain.model.case.ScheduledExpenseCase
-import com.finance.assistant.domain.model.case.SubscriptionAction
-import com.finance.assistant.domain.model.case.ZombieSubscriptionCase
+import com.finance.assistant.domain.model.alert.CaseSeverity
+import com.finance.assistant.domain.model.alert.CashGapCase
+import com.finance.assistant.domain.model.alert.FinanceCase
+import com.finance.assistant.domain.model.alert.ScheduledExpenseCase
+import com.finance.assistant.domain.model.alert.SubscriptionAction
+import com.finance.assistant.domain.model.alert.ZombieSubscriptionCase
 import com.finance.assistant.domain.model.expense.RecurringExpense
 import com.finance.assistant.domain.model.expense.RecurringFrequency
 import com.finance.assistant.domain.model.expense.UpcomingExpense
@@ -41,7 +41,20 @@ class CaseGeneratorUseCase @Inject constructor(
         val zombieSubscriptions = detectZombieSubscriptions(recurringExpenses)
         cases.addAll(zombieSubscriptions)
 
-        val scheduledExpenses = upcomingExpenses.take(10)
+        val scheduledExpenses = upcomingExpenses.take(10).map { expense ->
+            ScheduledExpenseCase(
+                id = expense.id,
+                title = expense.title,
+                description = expense.description,
+                dueDate = expense.dueDate,
+                amount = expense.amount,
+                severity = CaseSeverity.INFO,
+                isResolved = false,
+                category = expense.category,
+                source = expense.source.name,
+                isRecurring = false,
+            )
+        }
         cases.addAll(scheduledExpenses)
 
         return cases
@@ -51,7 +64,7 @@ class CaseGeneratorUseCase @Inject constructor(
         val cases = generateAllCases()
 
         cases.forEach { case ->
-            val (caseType, additionalData) = when (case) {
+            val (alertType, additionalData) = when (case) {
                 is CashGapCase -> "CASH_GAP" to CaseRepository.createAdditionalData(
                     "gapAmount" to case.gapAmount.toString(),
                     "daysUntilSalary" to case.daysUntilSalary.toString(),
@@ -76,7 +89,7 @@ class CaseGeneratorUseCase @Inject constructor(
                 description = case.description,
                 dueDate = case.dueDate,
                 amount = case.amount,
-                caseType = caseType,
+                alertType = alertType,
                 additionalData = additionalData,
             )
         }

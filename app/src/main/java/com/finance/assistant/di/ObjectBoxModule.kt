@@ -4,8 +4,8 @@ import com.finance.assistant.data.objectbox.ObjectBoxManager
 import com.finance.assistant.data.objectbox.entity.RecurringExpenseEntity
 import com.finance.assistant.data.objectbox.entity.UpcomingExpenseEntity
 import com.finance.assistant.data.objectbox.entity.UserProfileEntity
-import com.finance.assistant.data.objectbox.entity.case.ChatMessageEntity
-import com.finance.assistant.data.objectbox.entity.case.FinanceCaseEntity
+import com.finance.assistant.data.objectbox.entity.session.ChatMessageEntity
+import com.finance.assistant.data.objectbox.entity.session.FinanceCaseEntity
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

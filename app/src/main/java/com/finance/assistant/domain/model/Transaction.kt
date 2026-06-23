@@ -20,5 +20,5 @@ enum class TransactionCategory {
 }
 
 enum class TransactionSource {
-    SMS, EMAIL, CALENDAR, MANUAL,
+    SMS, NOTIFICATION, CALENDAR, DOCUMENT, MANUAL,
 }

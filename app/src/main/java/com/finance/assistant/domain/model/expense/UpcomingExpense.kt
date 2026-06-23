@@ -15,5 +15,5 @@ data class UpcomingExpense(
 )
 
 enum class ExpenseSource {
-    SMS, EMAIL, CALENDAR, MANUAL, DOCUMENT
+    SMS, CALENDAR, MANUAL, DOCUMENT
 }

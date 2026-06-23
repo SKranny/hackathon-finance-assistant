@@ -1,7 +1,7 @@
 package com.finance.assistant.data.repository
 
-import com.finance.assistant.data.objectbox.entity.case.ChatMessageEntity
-import com.finance.assistant.data.objectbox.entity.case.ChatMessageEntity_
+import com.finance.assistant.data.objectbox.entity.session.ChatMessageEntity
+import com.finance.assistant.data.objectbox.entity.session.ChatMessageEntity_
 import com.finance.assistant.domain.model.assistant.ChatMessage
 import com.finance.assistant.domain.model.assistant.MessageRole
 import io.objectbox.Box
@@ -36,7 +36,7 @@ class ChatRepository @Inject constructor(
     suspend fun markAsRead(id: Long) =
         withContext(Dispatchers.IO) {
             chatMessageBox.get(id)?.let {
-                it.isRead = true
+                it.read = true
                 chatMessageBox.put(it)
             }
         }
@@ -54,7 +54,7 @@ class ChatRepository @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getMessages(): Flow<List<ChatMessage>> =
         chatMessageBox.query()
-            .order(ChatMessageEntity_.timestamp)
+            .orderDesc(ChatMessageEntity_.timestamp)
             .build()
             .flow()
             .map { list -> list.map { it.toDomain() } }
@@ -63,9 +63,9 @@ class ChatRepository @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getUnreadMessages(): Flow<List<ChatMessage>> =
         chatMessageBox.query()
-            .equal(ChatMessageEntity_.isRead, false)
-            .notEqual(ChatMessageEntity_.role, MessageRole.USER.name)
-            .order(ChatMessageEntity_.timestamp)
+            .equal(ChatMessageEntity_.read, false)
+            .notEqual(ChatMessageEntity_.role, MessageRole.USER.name, io.objectbox.query.QueryBuilder.StringOrder.CASE_SENSITIVE)
+            .orderDesc(ChatMessageEntity_.timestamp)
             .build()
             .flow()
             .map { list -> list.map { it.toDomain() } }
@@ -89,6 +89,6 @@ class ChatRepository @Inject constructor(
             Instant.ofEpochMilli(timestamp),
             ZoneId.systemDefault()
         ),
-        isRead = isRead,
+        isRead = read,
     )
 }

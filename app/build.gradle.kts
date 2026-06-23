@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.objectbox)
+    id("io.objectbox")
 }
 
 android {
@@ -42,6 +42,10 @@ android {
 
     buildFeatures {
         compose = true
+    }
+
+    lint {
+        baseline = file("lint-baseline.xml")
     }
 }
 
@@ -81,5 +85,7 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines.android)
 
-    implementation(libs.objectbox)
+    implementation("io.objectbox:objectbox-kotlin:3.8.0")
+
+    implementation(libs.mlkit.text.recognition)
 }

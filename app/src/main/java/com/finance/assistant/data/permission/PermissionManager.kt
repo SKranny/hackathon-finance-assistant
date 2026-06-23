@@ -53,6 +53,13 @@ class PermissionManager @Inject constructor(
             isOptional = true,
             requiredFor = listOf("notifications"),
         ),
+        PermissionRequirement(
+            permission = Manifest.permission.READ_MEDIA_IMAGES,
+            title = "Доступ к фото",
+            description = "Для сканирования чеков и квитанций",
+            isOptional = true,
+            requiredFor = listOf("document_scanning"),
+        ),
     )
 
     init {

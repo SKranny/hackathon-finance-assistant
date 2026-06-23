@@ -5,6 +5,7 @@ import com.finance.assistant.data.objectbox.mapper.toDomain
 import com.finance.assistant.data.objectbox.mapper.toEntity
 import com.finance.assistant.domain.model.profile.UserProfile
 import io.objectbox.Box
+import io.objectbox.kotlin.flow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow

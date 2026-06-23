@@ -2,18 +2,18 @@ package com.finance.assistant.data.repository
 
 import com.finance.assistant.data.objectbox.entity.UpcomingExpenseEntity
 import com.finance.assistant.data.objectbox.entity.UpcomingExpenseEntity_
-import com.finance.assistant.data.objectbox.entity.case.ChatMessageEntity
-import com.finance.assistant.data.objectbox.entity.case.FinanceCaseEntity
-import com.finance.assistant.data.objectbox.entity.case.FinanceCaseEntity_
-import com.finance.assistant.data.objectbox.entity.case.ChatMessageEntity_
+import com.finance.assistant.data.objectbox.entity.session.ChatMessageEntity
+import com.finance.assistant.data.objectbox.entity.session.FinanceCaseEntity
+import com.finance.assistant.data.objectbox.entity.session.FinanceCaseEntity_
+import com.finance.assistant.data.objectbox.entity.session.ChatMessageEntity_
 import com.finance.assistant.data.objectbox.mapper.toDomain
-import com.finance.assistant.domain.model.case.CaseSeverity
-import com.finance.assistant.domain.model.case.CashGapCase
-import com.finance.assistant.domain.model.case.FinanceCase
-import com.finance.assistant.domain.model.case.IncomeCase
-import com.finance.assistant.domain.model.case.ScheduledExpenseCase
-import com.finance.assistant.domain.model.case.SubscriptionAction
-import com.finance.assistant.domain.model.case.ZombieSubscriptionCase
+import com.finance.assistant.domain.model.alert.CaseSeverity
+import com.finance.assistant.domain.model.alert.CashGapCase
+import com.finance.assistant.domain.model.alert.FinanceCase
+import com.finance.assistant.domain.model.alert.IncomeCase
+import com.finance.assistant.domain.model.alert.ScheduledExpenseCase
+import com.finance.assistant.domain.model.alert.SubscriptionAction
+import com.finance.assistant.domain.model.alert.ZombieSubscriptionCase
 import com.finance.assistant.domain.model.expense.UpcomingExpense
 import com.finance.assistant.domain.model.forecast.BalanceEvent
 import com.finance.assistant.domain.model.forecast.EventType
@@ -38,10 +38,10 @@ class CaseRepository @Inject constructor(
     private val upcomingExpenseBox: Box<UpcomingExpenseEntity>,
 ) {
 
-    suspend fun saveCase(severity: CaseSeverity, title: String, description: String, dueDate: LocalDate?, amount: Double, caseType: String, additionalData: String = ""): Long =
+    suspend fun saveCase(severity: CaseSeverity, title: String, description: String, dueDate: LocalDate?, amount: Double, alertType: String, additionalData: String = ""): Long =
         withContext(Dispatchers.IO) {
             val entity = FinanceCaseEntity(
-                caseType = caseType,
+                alertType = alertType,
                 title = title,
                 description = description,
                 dueDate = dueDate?.toEpochDay() ?: 0,
@@ -55,7 +55,7 @@ class CaseRepository @Inject constructor(
     suspend fun markCaseResolved(id: Long) =
         withContext(Dispatchers.IO) {
             caseBox.get(id)?.let {
-                it.isResolved = true
+                it.resolved = true
                 caseBox.put(it)
             }
         }
@@ -68,7 +68,7 @@ class CaseRepository @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getActiveCases(): Flow<List<FinanceCase>> =
         caseBox.query()
-            .equal(FinanceCaseEntity_.isResolved, false)
+            .equal(FinanceCaseEntity_.resolved, false)
             .orderDesc(FinanceCaseEntity_.severity)
             .build()
             .flow()
@@ -78,8 +78,8 @@ class CaseRepository @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getCasesByType(type: String): Flow<List<FinanceCase>> =
         caseBox.query()
-            .equal(FinanceCaseEntity_.caseType, type)
-            .equal(FinanceCaseEntity_.isResolved, false)
+            .equal(FinanceCaseEntity_.alertType, type, io.objectbox.query.QueryBuilder.StringOrder.CASE_SENSITIVE)
+            .equal(FinanceCaseEntity_.resolved, false)
             .build()
             .flow()
             .map { list -> list.map { it.toDomainCase() } }
@@ -89,7 +89,7 @@ class CaseRepository @Inject constructor(
     fun getCasesForDateRange(startDate: LocalDate, endDate: LocalDate): Flow<List<FinanceCase>> =
         caseBox.query()
             .between(FinanceCaseEntity_.dueDate, startDate.toEpochDay(), endDate.toEpochDay())
-            .equal(FinanceCaseEntity_.isResolved, false)
+            .equal(FinanceCaseEntity_.resolved, false)
             .order(FinanceCaseEntity_.dueDate)
             .build()
             .flow()
@@ -100,7 +100,7 @@ class CaseRepository @Inject constructor(
         val date = if (dueDate > 0) LocalDate.ofEpochDay(dueDate) else null
         val severityEnum = try { CaseSeverity.valueOf(severity) } catch (e: Exception) { CaseSeverity.INFO }
 
-        return when (caseType) {
+        return when (alertType) {
             "CASH_GAP" -> CashGapCase(
                 id = id,
                 title = title,
@@ -108,10 +108,10 @@ class CaseRepository @Inject constructor(
                 dueDate = date ?: LocalDate.now(),
                 amount = amount,
                 severity = severityEnum,
-                isResolved = isResolved,
-                gapAmount = parseAdditionalData("gapAmount") ?: amount,
-                daysUntilSalary = parseAdditionalData("daysUntilSalary")?.toInt() ?: 0,
-                recommendedSavingsPerDay = parseAdditionalData("recommendedSavingsPerDay")?.toDouble() ?: 0.0,
+                isResolved = resolved,
+                gapAmount = parseDouble(parseAdditionalData("gapAmount")) ?: amount,
+                daysUntilSalary = parseInt(parseAdditionalData("daysUntilSalary")) ?: 0,
+                recommendedSavingsPerDay = parseDouble(parseAdditionalData("recommendedSavingsPerDay")) ?: 0.0,
                 affectedExpenses = parseAdditionalDataList("affectedExpenses"),
             )
             "ZOMBIE_SUBSCRIPTION" -> ZombieSubscriptionCase(
@@ -121,10 +121,10 @@ class CaseRepository @Inject constructor(
                 dueDate = date,
                 amount = amount,
                 severity = severityEnum,
-                isResolved = isResolved,
+                isResolved = resolved,
                 monthlyAmount = amount,
                 lastUsageDate = date,
-                daysSinceLastUsage = parseAdditionalData("daysSinceLastUsage")?.toInt() ?: 0,
+                daysSinceLastUsage = parseInt(parseAdditionalData("daysSinceLastUsage")) ?: 0,
                 yearlyCost = amount * 12,
                 suggestedAction = try { SubscriptionAction.valueOf(parseAdditionalData("suggestedAction") ?: "INVESTIGATE") } catch (e: Exception) { SubscriptionAction.INVESTIGATE },
             )
@@ -135,10 +135,10 @@ class CaseRepository @Inject constructor(
                 dueDate = date ?: LocalDate.now(),
                 amount = amount,
                 severity = severityEnum,
-                isResolved = isResolved,
+                isResolved = resolved,
                 category = parseAdditionalData("category") ?: "OTHER",
                 source = parseAdditionalData("source") ?: "MANUAL",
-                isRecurring = parseAdditionalData("isRecurring")?.toBoolean() ?: false,
+                isRecurring = parseAdditionalData("isRecurring")?.toBooleanStrictOrNull() ?: false,
             )
             "INCOME" -> IncomeCase(
                 id = id,
@@ -147,7 +147,7 @@ class CaseRepository @Inject constructor(
                 dueDate = date ?: LocalDate.now(),
                 amount = amount,
                 severity = severityEnum,
-                isResolved = isResolved,
+                isResolved = resolved,
                 source = parseAdditionalData("source") ?: "SALARY",
             )
             else -> ScheduledExpenseCase(
@@ -157,7 +157,7 @@ class CaseRepository @Inject constructor(
                 dueDate = date ?: LocalDate.now(),
                 amount = amount,
                 severity = severityEnum,
-                isResolved = isResolved,
+                isResolved = resolved,
                 category = "OTHER",
                 source = "UNKNOWN",
             )
@@ -170,6 +170,10 @@ class CaseRepository @Inject constructor(
             .filter { it.size == 2 }
             .find { it[0] == key }?.get(1)
     }
+
+    private fun parseDouble(value: String?): Double? = value?.toDoubleOrNull()
+
+    private fun parseInt(value: String?): Int? = value?.toIntOrNull()
 
     private fun FinanceCaseEntity.parseAdditionalDataList(key: String): List<String> {
         return parseAdditionalData(key)?.split(",")?.filter { it.isNotEmpty() } ?: emptyList()

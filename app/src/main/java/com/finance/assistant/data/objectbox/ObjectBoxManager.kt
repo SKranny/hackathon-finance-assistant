@@ -9,7 +9,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ObjectBoxManager @Inject constructor(
-    @ApplicationContext context: Context,
+    @ApplicationContext private val context: Context,
 ) {
     val boxStore: BoxStore = MyObjectBox.builder()
         .androidContext(context.applicationContext)
@@ -17,6 +17,16 @@ class ObjectBoxManager @Inject constructor(
 
     fun close() {
         boxStore.close()
+    }
+
+    suspend fun deleteAllData(): Boolean {
+        return try {
+            close()
+            context.deleteDatabase("my-objectbox-db")
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 
     companion object {
