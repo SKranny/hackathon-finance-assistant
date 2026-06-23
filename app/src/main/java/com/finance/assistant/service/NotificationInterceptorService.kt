@@ -55,7 +55,7 @@ class NotificationParsingLogic {
 
     private val bankPatterns = listOf(
         BankPattern("Sberbank", listOf("sberbank", "сбербанк", "сбер", "sber"), null),
-        BankPattern("Т-Банк", listOf("tbank", "тбанк", "tinkoff", "тинькофф", "тинкоф"), null),
+        BankPattern("Т-Банк", listOf("tbank", "тбанк"), null),
         BankPattern("Alfa-Bank", listOf("alfa", "альфа", "alfabank"), null),
         BankPattern("VTB", listOf("vtb", "втб"), null),
         BankPattern("Kaspi", listOf("kaspi", "каспи", "қаспы"), null),
