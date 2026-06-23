@@ -18,13 +18,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.finance.assistant.domain.model.FinancialInsight
-import com.finance.assistant.domain.model.InsightSeverity
+import com.finance.assistant.ui.components.ExpandableExpenseCard
 import com.finance.assistant.ui.screens.viewmodel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,14 +53,28 @@ fun HomeScreen(
 
             item {
                 Text(
-                    text = "Уведомления",
+                    text = "Кейсы",
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(top = 8.dp),
                 )
             }
 
-            items(uiState.insights) { insight ->
-                InsightCard(insight = insight)
+            if (uiState.scheduledExpenses.isEmpty()) {
+                item {
+                    EmptyCasesCard()
+                }
+            } else {
+                items(uiState.scheduledExpenses, key = { it.id }) { expense ->
+                    ExpandableExpenseCard(
+                        expense = expense,
+                        onResolveCase = { resolution ->
+                            viewModel.resolveCase(expense, resolution)
+                        },
+                        onStartSavingsPlan = { recommendation, targetAmount ->
+                            viewModel.startSavingsPlan(expense, recommendation, targetAmount)
+                        },
+                    )
+                }
             }
 
             item { Spacer(modifier = Modifier.height(16.dp)) }
@@ -112,29 +126,31 @@ private fun BalanceCard(totalIncome: Double, totalExpenses: Double) {
 }
 
 @Composable
-private fun InsightCard(insight: FinancialInsight) {
-    val containerColor = when (insight.severity) {
-        InsightSeverity.CRITICAL -> MaterialTheme.colorScheme.errorContainer
-        InsightSeverity.WARNING -> MaterialTheme.colorScheme.tertiaryContainer
-        InsightSeverity.INFO -> MaterialTheme.colorScheme.surfaceVariant
-    }
-
+private fun EmptyCasesCard() {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = containerColor),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        ),
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier.padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             Text(
-                text = insight.title,
+                text = "🎉",
+                style = MaterialTheme.typography.headlineMedium,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Нет активных кейсов",
                 style = MaterialTheme.typography.titleMedium,
             )
-            if (insight.description.isNotBlank()) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = insight.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
+            Text(
+                text = "Все финансовые вопросы под контролем",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
