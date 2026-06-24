@@ -1,8 +1,10 @@
 package com.finance.assistant.domain.usecase
 
+import android.util.Log
 import com.finance.assistant.data.repository.CaseRepository
 import com.finance.assistant.data.repository.ChatRepository
 import com.finance.assistant.data.repository.ExpenseRepository
+import com.finance.assistant.data.repository.LLMRepository
 import com.finance.assistant.data.repository.UserRepository
 import com.finance.assistant.domain.model.assistant.ActionType
 import com.finance.assistant.domain.model.assistant.AssistantAction
@@ -11,9 +13,6 @@ import com.finance.assistant.domain.model.assistant.AssistantResponse
 import com.finance.assistant.domain.model.assistant.ChatAction
 import com.finance.assistant.domain.model.assistant.ChatMessage
 import com.finance.assistant.domain.model.assistant.MessageRole
-import com.finance.assistant.domain.model.expense.RecurringExpense
-import com.finance.assistant.domain.model.expense.UpcomingExpense
-import com.finance.assistant.domain.model.forecast.BalanceForecast
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -27,6 +26,7 @@ class AssistantUseCase @Inject constructor(
     private val expenseRepository: ExpenseRepository,
     private val caseRepository: CaseRepository,
     private val balanceForecastUseCase: BalanceForecastUseCase,
+    private val llmRepository: LLMRepository,
 ) {
 
     suspend fun sendMessage(userMessage: String): AssistantResponse {
@@ -111,7 +111,45 @@ class AssistantUseCase @Inject constructor(
         )
     }
 
-    private fun generateResponse(userMessage: String, context: AssistantContext): String {
+    private suspend fun generateResponse(userMessage: String, context: AssistantContext): String {
+        val llmResponse = generateLLMResponse(userMessage, context)
+        return llmResponse ?: generateRuleBasedResponse(userMessage, context)
+    }
+
+    private suspend fun generateLLMResponse(userMessage: String, context: AssistantContext): String? {
+        val prompt = buildChatPrompt(userMessage, context)
+
+        return llmRepository.generateText(prompt, temperature = 0.7f)
+            .onFailure { error ->
+                Log.w(TAG, "LLM generation failed: ${error.message}")
+            }
+            .getOrNull()
+    }
+
+    private fun buildChatPrompt(userMessage: String, context: AssistantContext): String {
+        val balanceFormatted = "%,.2f".format(context.currentBalance).replace(",", " ")
+        val incomeFormatted = "%,.2f".format(context.monthlyIncome).replace(",", " ")
+        val expensesFormatted = "%,.2f".format(context.monthlyExpenses).replace(",", " ")
+
+        return """
+Ты финансовый ассистент в мобильном приложении. Отвечай кратко, дружелюбно и по делу на русском языке.
+
+КОНТЕКСТ ПОЛЬЗОВАТЕЛЯ:
+- Текущий баланс: $balanceFormatted ₽
+- Месячный доход: $incomeFormatted ₽
+- Месячные расходы: $expensesFormatted ₽
+- Предстоящих расходов: ${context.upcomingExpenses}
+- Активных проблем: ${context.activeCases}
+- Следующая зарплата: ${context.nextSalaryDate ?: "не указана"}
+
+ВОПРОС ПОЛЬЗОВАТЕЛЯ:
+$userMessage
+
+Ответь кратко (2-3 предложения) и по существу. Если нужны действия - предложи их.
+        """.trimIndent()
+    }
+
+    private fun generateRuleBasedResponse(userMessage: String, context: AssistantContext): String {
         val lowerMessage = userMessage.lowercase()
 
         return when {
@@ -156,5 +194,9 @@ class AssistantUseCase @Inject constructor(
 
     private fun formatMoney(amount: Double): String {
         return "%,.2f".format(amount).replace(",", " ")
+    }
+
+    companion object {
+        private const val TAG = "AssistantUseCase"
     }
 }
