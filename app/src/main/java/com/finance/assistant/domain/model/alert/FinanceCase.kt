@@ -53,6 +53,8 @@ data class ScheduledExpenseCase(
     val source: String,
     val isRecurring: Boolean = false,
     val suggestedAmount: Double? = null,
+    val savingsRecommendation: SavingsRecommendation? = null,
+    val suggestedResolutions: List<CaseResolution> = emptyList(),
 ) : FinanceCase()
 
 data class IncomeCase(

@@ -14,6 +14,9 @@ import com.finance.assistant.domain.model.alert.IncomeCase
 import com.finance.assistant.domain.model.alert.ScheduledExpenseCase
 import com.finance.assistant.domain.model.alert.SubscriptionAction
 import com.finance.assistant.domain.model.alert.ZombieSubscriptionCase
+import com.finance.assistant.domain.model.alert.CaseResolution
+import com.finance.assistant.domain.model.alert.RiskLevel
+import com.finance.assistant.domain.model.alert.SavingsRecommendation
 import com.finance.assistant.domain.model.expense.UpcomingExpense
 import com.finance.assistant.domain.model.forecast.BalanceEvent
 import com.finance.assistant.domain.model.forecast.EventType
@@ -29,6 +32,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -128,18 +132,31 @@ class CaseRepository @Inject constructor(
                 yearlyCost = amount * 12,
                 suggestedAction = try { SubscriptionAction.valueOf(parseAdditionalData("suggestedAction") ?: "INVESTIGATE") } catch (e: Exception) { SubscriptionAction.INVESTIGATE },
             )
-            "SCHEDULED_EXPENSE" -> ScheduledExpenseCase(
-                id = id,
-                title = title,
-                description = description,
-                dueDate = date ?: LocalDate.now(),
-                amount = amount,
-                severity = severityEnum,
-                isResolved = resolved,
-                category = parseAdditionalData("category") ?: "OTHER",
-                source = parseAdditionalData("source") ?: "MANUAL",
-                isRecurring = parseAdditionalData("isRecurring")?.toBooleanStrictOrNull() ?: false,
-            )
+            "SCHEDULED_EXPENSE" -> {
+                val category = parseAdditionalData("category") ?: "OTHER"
+                val source = parseAdditionalData("source") ?: "MANUAL"
+                val scheduledDate = date ?: LocalDate.now()
+                val daysUntil = ChronoUnit.DAYS.between(LocalDate.now(), scheduledDate).toInt().coerceAtLeast(1)
+                
+                val recommendation = if (amount > 0 && daysUntil > 0) {
+                    createSavingsRecommendation(amount, daysUntil)
+                } else null
+                
+                ScheduledExpenseCase(
+                    id = id,
+                    title = title,
+                    description = description,
+                    dueDate = scheduledDate,
+                    amount = amount,
+                    severity = severityEnum,
+                    isResolved = resolved,
+                    category = category,
+                    source = source,
+                    isRecurring = parseAdditionalData("isRecurring")?.toBooleanStrictOrNull() ?: false,
+                    savingsRecommendation = recommendation,
+                    suggestedResolutions = generateResolutionsForExpense(category, amount),
+                )
+            }
             "INCOME" -> IncomeCase(
                 id = id,
                 title = title,
@@ -160,6 +177,82 @@ class CaseRepository @Inject constructor(
                 isResolved = resolved,
                 category = "OTHER",
                 source = "UNKNOWN",
+            )
+        }
+    }
+
+    private fun createSavingsRecommendation(amount: Double, daysUntil: Int): SavingsRecommendation {
+        val daily = amount / daysUntil
+        val weekly = daily * 7
+        val monthly = daily * 30
+
+        val riskLevel = when {
+            daily > 1000 -> RiskLevel.HIGH
+            daily > 500 -> RiskLevel.MEDIUM
+            else -> RiskLevel.LOW
+        }
+
+        val recommendationText = when (riskLevel) {
+            RiskLevel.LOW ->
+                "Откладывайте по ${daily.toInt()} ₽ в день, чтобы накопить нужную сумму без ущерба для бюджета."
+            RiskLevel.MEDIUM ->
+                "Рекомендуем сократить развлекательные расходы на ${(weekly * 0.3).toInt()} ₽ в неделю для достижения цели."
+            RiskLevel.HIGH ->
+                "Цель амбициозная. Рассмотрите возможность частичного использования накоплений или отложите покупку."
+        }
+
+        return SavingsRecommendation(
+            suggestedDailyAmount = daily,
+            suggestedWeeklyAmount = weekly,
+            suggestedMonthlyAmount = monthly,
+            totalToSave = amount,
+            daysUntilExpense = daysUntil,
+            recommendationText = recommendationText,
+            riskLevel = riskLevel,
+        )
+    }
+
+    private fun generateResolutionsForExpense(category: String, amount: Double): List<CaseResolution> {
+        return when (category.lowercase()) {
+            "садик", "детский сад" -> listOf(
+                CaseResolution.RescheduleResolution(
+                    id = "reschedule_kindergarten",
+                    title = "Перенести оплату садика",
+                    description = "Отложить платеж до следующей зарплаты",
+                    recommendedFor = listOf("kindergarten"),
+                ),
+                CaseResolution.UseSavingsResolution(),
+                CaseResolution.CreditLimitResolution(
+                    id = "credit_kindergarten",
+                    title = "Короткий лимит",
+                    description = "Взять в долг до зарплаты ${amount.toInt()} ₽",
+                    recommendedFor = listOf("kindergarten"),
+                    limitAmount = amount,
+                ),
+            )
+            "жкх", "коммунальные" -> listOf(
+                CaseResolution.RescheduleResolution(
+                    id = "reschedule_utility",
+                    title = "Перенести платеж ЖКХ",
+                    description = "Попросить рассрочку или перенести на другой период",
+                    recommendedFor = listOf("utility"),
+                ),
+                CaseResolution.ReduceExpenseResolution(
+                    id = "reduce_utility",
+                    title = "Найти более дешевый тариф",
+                    description = "Сравнить предложения других поставщиков",
+                    recommendedFor = listOf("utility"),
+                ),
+            )
+            else -> listOf(
+                CaseResolution.UseSavingsResolution(),
+                CaseResolution.CreditLimitResolution(
+                    id = "credit_other",
+                    title = "Короткий лимит до зарплаты",
+                    description = "Взять в долг недостающую сумму ${amount.toInt()} ₽",
+                    recommendedFor = listOf("other"),
+                    limitAmount = amount,
+                ),
             )
         }
     }
