@@ -2,10 +2,10 @@ package com.finance.assistant.ui.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalance
-import androidx.compose.material.icons.filled.Analytics
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.ShowChart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -19,10 +19,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.finance.assistant.ui.screens.AnalyticsScreen
+import com.finance.assistant.ui.screens.AssistantScreen
+import com.finance.assistant.ui.screens.FeedScreen
+import com.finance.assistant.ui.screens.ForecastScreen
 import com.finance.assistant.ui.screens.HomeScreen
-import com.finance.assistant.ui.screens.SettingsScreen
-import com.finance.assistant.ui.screens.TransactionsScreen
 
 data class BottomNavItem(
     val label: String,
@@ -32,9 +32,9 @@ data class BottomNavItem(
 
 private val bottomNavItems = listOf(
     BottomNavItem("Главная", Icons.Default.Home, Screen.Home),
-    BottomNavItem("Транзакции", Icons.Default.AccountBalance, Screen.Transactions),
-    BottomNavItem("Аналитика", Icons.Default.Analytics, Screen.Analytics),
-    BottomNavItem("Настройки", Icons.Default.Settings, Screen.Settings),
+    BottomNavItem("Лента", Icons.Default.Notifications, Screen.Feed),
+    BottomNavItem("Помощник", Icons.Default.AutoAwesome, Screen.Assistant),
+    BottomNavItem("Прогноз", Icons.Default.ShowChart, Screen.Forecast),
 )
 
 @Composable
@@ -70,9 +70,9 @@ fun NavGraph(navController: NavHostController) {
             modifier = Modifier.padding(innerPadding),
         ) {
             composable(Screen.Home.route) { HomeScreen() }
-            composable(Screen.Transactions.route) { TransactionsScreen() }
-            composable(Screen.Analytics.route) { AnalyticsScreen() }
-            composable(Screen.Settings.route) { SettingsScreen() }
+            composable(Screen.Feed.route) { FeedScreen() }
+            composable(Screen.Assistant.route) { AssistantScreen() }
+            composable(Screen.Forecast.route) { ForecastScreen() }
         }
     }
 }

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Помощник</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #e5e5ea;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: Onest, -apple-system, Roboto, Helvetica, sans-serif;
+    }
+
+    .phone-frame {
+      width: 390px;
+      height: 844px;
+      border-radius: 44px;
+      background: #f5f5f7;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      display: flex;
+      padding: 16px 30px 6px;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+    }
+
+    .status-time {
+      color: #1d1d1f;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 135%;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .signal-bars {
+      width: 17px;
+      height: 11px;
+      position: relative;
+    }
+
+    .signal-bar {
+      width: 3px;
+      border-radius: 1px;
+      background: #1d1d1f;
+      position: absolute;
+      bottom: 0;
+    }
+
+    .signal-bar:nth-child(1) { height: 4px;  left: 0;   }
+    .signal-bar:nth-child(2) { height: 6px;  left: 5px; }
+    .signal-bar:nth-child(3) { height: 9px;  left: 9px; }
+    .signal-bar:nth-child(4) { height: 11px; left: 14px;}
+
+    .battery-icon {
+      width: 27px;
+      height: 13px;
+      position: relative;
+    }
+
+    .battery-body {
+      width: 22px;
+      height: 11px;
+      border-radius: 3px;
+      border: 1.4px solid #1d1d1f;
+      position: absolute;
+      left: 0;
+      top: 1px;
+    }
+
+    .battery-fill {
+      width: 16px;
+      height: 7px;
+      border-radius: 1.5px;
+      background: #1d1d1f;
+      position: absolute;
+      left: 2px;
+      top: 3px;
+    }
+
+    .battery-tip {
+      width: 2px;
+      height: 4px;
+      border-radius: 1px;
+      background: #1d1d1f;
+      position: absolute;
+      left: 23px;
+      top: 5px;
+    }
+
+    /* Chat Header */
+    .chat-header {
+      display: flex;
+      padding: 2px 22px 14px;
+      align-items: center;
+      gap: 11px;
+      background: #fff;
+    }
+
+    .assistant-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      background: #ef3124;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 135%;
+    }
+
+    .assistant-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .assistant-name {
+      color: #1d1d1f;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 135%;
+    }
+
+    .assistant-status {
+      color: #1aa66b;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 135%;
+    }
+
+    .header-divider {
+      height: 1px;
+      background: #f2f2f4;
+    }
+
+    /* Chat Body */
+    .chat-body {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      flex: 1;
+      padding: 16px 16px 8px;
+      background: #f5f5f7;
+      overflow-y: auto;
+    }
+
+    /* Message bubbles */
+    .bot-bubble {
+      display: flex;
+      width: 260px;
+      padding: 13px 15px;
+      flex-direction: column;
+      gap: 11px;
+      border-radius: 18px;
+      background: #fff;
+      align-self: flex-start;
+    }
+
+    .user-bubble {
+      display: flex;
+      padding: 13px 15px;
+      flex-direction: column;
+      border-radius: 18px;
+      background: #ef3124;
+      align-self: flex-end;
+    }
+
+    .bot-text {
+      color: #1d1d1f;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 145%;
+    }
+
+    .user-text {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 145%;
+    }
+
+    /* Action button inside bubble */
+    .action-btn {
+      display: flex;
+      width: 150px;
+      height: 36px;
+      padding: 0 14px;
+      justify-content: center;
+      align-items: center;
+      border-radius: 11px;
+      border: 1.5px solid #fbd9d4;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .action-btn-label {
+      color: #ef3124;
+      font-family: Onest, -apple-system, Roboto, Helvetica, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 135%;
+    }
+
+    /* Input bar */
+    .input-bar {
+      display: flex;
+      padding: 10px 16px 12px;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+    }
+
+    .message-input {
+      flex: 1;
+      height: 42px;
+      border-radius: 14px;
+      border: none;
+      background: #f5f5f7;
+      padding: 0 14px;
+      color: #1d1d1f;
+      font-family: Onest, -apple-system, Roboto, Helvetica, sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      outline: none;
+    }
+
+    .message-input::placeholder {
+      color: #b6b6bb;
+    }
+
+    .send-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #ef3124;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      display: flex;
+      padding: 10px 0 24px;
+      justify-content: space-around;
+      align-items: flex-start;
+      background: #fff;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .nav-label {
+      font-size: 10px;
+      font-weight: 600;
+      line-height: normal;
+      color: #b6b6bb;
+    }
+
+    .nav-label--active {
+      color: #ef3124;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <div class="signal-bars">
+          <div class="signal-bar"></div>
+          <div class="signal-bar"></div>
+          <div class="signal-bar"></div>
+          <div class="signal-bar"></div>
+        </div>
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 4.5C4.5 1.5 11.5 1.5 15 4.5M3.5 7C6 5 10 5 12.5 7M6 9.5C7 8.8 9 8.8 10 9.5" stroke="#1D1D1F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="battery-icon">
+          <div class="battery-body"></div>
+          <div class="battery-fill"></div>
+          <div class="battery-tip"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <div class="assistant-avatar">✦</div>
+      <div class="assistant-info">
+        <span class="assistant-name">Помощник</span>
+        <span class="assistant-status">читает почту и календарь</span>
+      </div>
+    </div>
+
+    <div class="header-divider"></div>
+
+    <!-- Chat Body -->
+    <div class="chat-body">
+
+      <!-- Bot message 1 -->
+      <div class="bot-bubble">
+        <p class="bot-text">Заметил риск 👀 С 3 по 5 июня уйдёт 112 000 ₽, а зарплата только 10-го. Не хватит ≈40 000 ₽.</p>
+      </div>
+
+      <!-- Bot message 2 with action -->
+      <div class="bot-bubble">
+        <p class="bot-text">Самый выгодный вариант — перенести оплату садика на 11-е. Без процентов.</p>
+        <button class="action-btn">
+          <span class="action-btn-label">Перенести садик</span>
+        </button>
+      </div>
+
+      <!-- User message -->
+      <div class="user-bubble">
+        <p class="user-text">Окей, перенеси</p>
+      </div>
+
+    </div>
+
+    <!-- Input Bar -->
+    <div class="input-bar">
+      <input class="message-input" type="text" placeholder="Спроси о деньгах..." />
+      <button class="send-btn">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 15V3M9 3L4 8M9 3L14 8" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <div class="nav-item">
+        <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 10.5L12 4L20 10.5M6 9.5V20H18V9.5" stroke="#B6B6BB" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="nav-label">Главная</span>
+      </div>
+      <div class="nav-item">
+        <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 18C10 19.1 10.9 20 12 20C13.1 20 14 19.1 14 18M6 9C6 5.7 8.7 3 12 3C15.3 3 18 5.7 18 9C18 14 20 15 20 15H4C4 15 6 14 6 9Z" stroke="#B6B6BB" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="nav-label">Лента</span>
+      </div>
+      <div class="nav-item">
+        <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13.6 9.4L12 4L10.4 9.4L5 11L10.4 12.6L12 18L13.6 12.6L19 11L13.6 9.4Z" stroke="#EF3124" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="nav-label nav-label--active">Помощник</span>
+      </div>
+      <div class="nav-item">
+        <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 19V5M4 15L9 11L13 14L20 7" stroke="#B6B6BB" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="nav-label">Прогноз</span>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

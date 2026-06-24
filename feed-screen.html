@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Лента</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #e5e5ea;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: Onest, -apple-system, Roboto, Helvetica, sans-serif;
+    }
+
+    .phone-frame {
+      width: 390px;
+      height: 844px;
+      border-radius: 44px;
+      background: #f5f5f7;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      display: flex;
+      padding: 16px 30px 6px;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+    }
+
+    .status-time {
+      color: #1d1d1f;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 135%;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .signal-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 1px;
+      width: 17px;
+      height: 11px;
+      position: relative;
+    }
+
+    .signal-bar {
+      width: 3px;
+      border-radius: 1px;
+      background: #1d1d1f;
+      position: absolute;
+      bottom: 0;
+    }
+
+    .signal-bar:nth-child(1) { height: 4px; left: 0; }
+    .signal-bar:nth-child(2) { height: 6px; left: 5px; }
+    .signal-bar:nth-child(3) { height: 9px; left: 9px; }
+    .signal-bar:nth-child(4) { height: 11px; left: 14px; }
+
+    .battery-icon {
+      width: 27px;
+      height: 13px;
+      position: relative;
+    }
+
+    .battery-body {
+      width: 22px;
+      height: 11px;
+      border-radius: 3px;
+      border: 1.4px solid #1d1d1f;
+      position: absolute;
+      left: 0;
+      top: 1px;
+    }
+
+    .battery-fill {
+      width: 16px;
+      height: 7px;
+      border-radius: 1.5px;
+      background: #1d1d1f;
+      position: absolute;
+      left: 2px;
+      top: 3px;
+    }
+
+    .battery-tip {
+      width: 2px;
+      height: 4px;
+      border-radius: 1px;
+      background: #1d1d1f;
+      position: absolute;
+      left: 23px;
+      top: 5px;
+    }
+
+    /* Header */
+    .screen-header {
+      display: flex;
+      padding: 2px 22px 14px;
+      flex-direction: column;
+      gap: 2px;
+      background: #fff;
+    }
+
+    .screen-title {
+      color: #1d1d1f;
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 135%;
+      letter-spacing: -0.48px;
+    }
+
+    .screen-subtitle {
+      color: #86827b;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 135%;
+    }
+
+    /* Cards List */
+    .cards-list {
+      display: flex;
+      padding: 16px 18px 8px;
+      flex-direction: column;
+      gap: 13px;
+      flex: 1;
+      background: #fff;
+      overflow-y: auto;
+    }
+
+    /* Insight Card */
+    .insight-card {
+      display: flex;
+      padding: 15px;
+      flex-direction: column;
+      gap: 8px;
+      border-radius: 20px;
+      border: 1px solid;
+      background: #fff;
+    }
+
+    .insight-card--red    { border-color: #fbd9d4; }
+    .insight-card--orange { border-color: #fbe6c4; }
+    .insight-card--blue   { border-color: #d4d4e8; }
+    .insight-card--yellow { border-color: #fbe6c4; }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .card-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      flex-shrink: 0;
+    }
+
+    .card-icon--red    { background: #feecea; }
+    .card-icon--orange { background: #fff3d6; }
+    .card-icon--blue   { background: #eeeef5; }
+    .card-icon--yellow { background: #fff3d6; }
+
+    .card-label {
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 135%;
+    }
+
+    .card-label--red    { color: #ef3124; }
+    .card-label--orange { color: #c98a00; }
+    .card-label--blue   { color: #6b6bc2; }
+    .card-label--yellow { color: #c98a00; }
+
+    .card-title {
+      color: #1d1d1f;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 135%;
+    }
+
+    .card-description {
+      color: #86827b;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 145%;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      display: flex;
+      padding: 10px 0 24px;
+      justify-content: space-around;
+      align-items: flex-start;
+      background: #fff;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .nav-label {
+      font-size: 10px;
+      font-weight: 600;
+      line-height: normal;
+      color: #b6b6bb;
+    }
+
+    .nav-label--active {
+      color: #ef3124;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <div class="signal-bars">
+          <div class="signal-bar"></div>
+          <div class="signal-bar"></div>
+          <div class="signal-bar"></div>
+          <div class="signal-bar"></div>
+        </div>
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 4.5C4.5 1.5 11.5 1.5 15 4.5M3.5 7C6 5 10 5 12.5 7M6 9.5C7 8.8 9 8.8 10 9.5" stroke="#1D1D1F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="battery-icon">
+          <div class="battery-body"></div>
+          <div class="battery-fill"></div>
+          <div class="battery-tip"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen Header -->
+    <div class="screen-header">
+      <h1 class="screen-title">Лента</h1>
+      <p class="screen-subtitle">5 инсайтов от помощника</p>
+    </div>
+
+    <!-- Cards List -->
+    <div class="cards-list">
+
+      <!-- Case 1: Cash gap -->
+      <div class="insight-card insight-card--red">
+        <div class="card-meta">
+          <div class="card-icon card-icon--red"></div>
+          <span class="card-label card-label--red">Кейс 1 · Срочно · через 6 дней</span>
+        </div>
+        <p class="card-title">Кассовый разрыв до зарплаты</p>
+        <p class="card-description">3–5 июня уйдёт 112 000 ₽, не хватит ≈40 000 ₽.</p>
+      </div>
+
+      <!-- Case 2: Zombie subscriptions -->
+      <div class="insight-card insight-card--orange">
+        <div class="card-meta">
+          <div class="card-icon card-icon--orange"></div>
+          <span class="card-label card-label--orange">Кейс 2 · Подписки-зомби</span>
+        </div>
+        <p class="card-title">4 подписки на 3 200 ₽/мес</p>
+        <p class="card-description">Двумя ты не пользуешься с марта. 38 400 ₽ в год.</p>
+      </div>
+
+      <!-- Case 3: Car service -->
+      <div class="insight-card insight-card--blue">
+        <div class="card-meta">
+          <div class="card-icon card-icon--blue"></div>
+          <span class="card-label card-label--blue">Кейс 3 · Крупная покупка · 28 июня</span>
+        </div>
+        <p class="card-title">ТО машины — 60 000 ₽</p>
+        <p class="card-description">Предлагаю отложить 15 000 ₽ × 4 недели.</p>
+      </div>
+
+      <!-- Case 4: Trip -->
+      <div class="insight-card insight-card--blue">
+        <div class="card-meta">
+          <div class="card-icon card-icon--blue"></div>
+          <span class="card-label card-label--blue">Кейс 4 · Поездка · 24–26 июня</span>
+        </div>
+        <p class="card-title">Алматы → Астана</p>
+        <p class="card-description">Прошлые поездки: ~25 000 ₽ сверх обычного.</p>
+      </div>
+
+      <!-- Case 5: Tax deadline -->
+      <div class="insight-card insight-card--orange">
+        <div class="card-meta">
+          <div class="card-icon card-icon--yellow"></div>
+          <span class="card-label card-label--orange">Кейс 5 · Дедлайн · через 5 дней</span>
+        </div>
+        <p class="card-title">Налог 45 000 ₽</p>
+        <p class="card-description">На счёте 30 000 ₽. Не хватает 15 000 ₽.</p>
+      </div>
+
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <div class="nav-item">
+        <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 10.5L12 4L20 10.5M6 9.5V20H18V9.5" stroke="#B6B6BB" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="nav-label">Главная</span>
+      </div>
+      <div class="nav-item">
+        <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 18C10 19.1 10.9 20 12 20C13.1 20 14 19.1 14 18M6 9C6 5.7 8.7 3 12 3C15.3 3 18 5.7 18 9C18 14 20 15 20 15H4C4 15 6 14 6 9Z" stroke="#EF3124" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="nav-label nav-label--active">Лента</span>
+      </div>
+      <div class="nav-item">
+        <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13.6 9.4L12 4L10.4 9.4L5 11L10.4 12.6L12 18L13.6 12.6L19 11L13.6 9.4Z" stroke="#B6B6BB" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="nav-label">Помощник</span>
+      </div>
+      <div class="nav-item">
+        <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 19V5M4 15L9 11L13 14L20 7" stroke="#B6B6BB" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="nav-label">Прогноз</span>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
