@@ -6,40 +6,51 @@ import android.view.View;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
-import com.finance.assistant.data.local.FinanceDatabase;
-import com.finance.assistant.data.local.dao.FinancialInsightDao;
-import com.finance.assistant.data.local.dao.TransactionDao;
-import com.finance.assistant.data.objectbox.ObjectBoxManager;
-import com.finance.assistant.data.objectbox.entity.RecurringExpenseEntity;
-import com.finance.assistant.data.objectbox.entity.UpcomingExpenseEntity;
-import com.finance.assistant.data.objectbox.entity.UserProfileEntity;
-import com.finance.assistant.data.objectbox.entity.session.ChatMessageEntity;
-import com.finance.assistant.data.objectbox.entity.session.FinanceCaseEntity;
-import com.finance.assistant.data.repository.CaseRepository;
-import com.finance.assistant.data.repository.ChatRepository;
-import com.finance.assistant.data.repository.ExpenseRepository;
-import com.finance.assistant.data.repository.InsightRepository;
-import com.finance.assistant.data.repository.TransactionRepository;
-import com.finance.assistant.data.repository.UserRepository;
-import com.finance.assistant.di.AppModule_ProvideFinanceDatabaseFactory;
-import com.finance.assistant.di.AppModule_ProvideFinancialInsightDaoFactory;
-import com.finance.assistant.di.AppModule_ProvideTransactionDaoFactory;
-import com.finance.assistant.di.ObjectBoxModule_ProvideBoxStoreFactory;
-import com.finance.assistant.di.ObjectBoxModule_ProvideChatMessageBoxFactory;
-import com.finance.assistant.di.ObjectBoxModule_ProvideFinanceCaseBoxFactory;
-import com.finance.assistant.di.ObjectBoxModule_ProvideRecurringExpenseBoxFactory;
-import com.finance.assistant.di.ObjectBoxModule_ProvideUpcomingExpenseBoxFactory;
-import com.finance.assistant.di.ObjectBoxModule_ProvideUserProfileBoxFactory;
-import com.finance.assistant.domain.usecase.AssistantUseCase;
-import com.finance.assistant.domain.usecase.BalanceForecastUseCase;
+import com.finance.assistant.data.remote.OllamaApiService;
+import com.finance.assistant.data.repository.CashGapDataRepository;
+import com.finance.assistant.data.repository.FeedDataRepository;
+import com.finance.assistant.data.repository.ForecastDataRepository;
+import com.finance.assistant.data.repository.HomeDataRepository;
+import com.finance.assistant.data.repository.LLMRepository;
+import com.finance.assistant.data.repository.MockAssistantRepository;
+import com.finance.assistant.data.repository.PaymentConfirmationDataRepository;
+import com.finance.assistant.data.repository.RescheduleDataRepository;
+import com.finance.assistant.di.LLMModule_ProvideGsonFactory;
+import com.finance.assistant.di.LLMModule_ProvideLLMRepositoryFactory;
+import com.finance.assistant.di.LLMModule_ProvideLoggingInterceptorFactory;
+import com.finance.assistant.di.LLMModule_ProvideOkHttpClientFactory;
+import com.finance.assistant.di.LLMModule_ProvideOllamaApiServiceFactory;
+import com.finance.assistant.di.LLMModule_ProvideOllamaBaseUrlFactory;
+import com.finance.assistant.di.LLMModule_ProvideOllamaModelNameFactory;
 import com.finance.assistant.ui.screens.viewmodel.AssistantViewModel;
 import com.finance.assistant.ui.screens.viewmodel.AssistantViewModel_HiltModules;
 import com.finance.assistant.ui.screens.viewmodel.AssistantViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
 import com.finance.assistant.ui.screens.viewmodel.AssistantViewModel_HiltModules_KeyModule_Provide_LazyMapKey;
+import com.finance.assistant.ui.screens.viewmodel.CashGapViewModel;
+import com.finance.assistant.ui.screens.viewmodel.CashGapViewModel_HiltModules;
+import com.finance.assistant.ui.screens.viewmodel.CashGapViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
+import com.finance.assistant.ui.screens.viewmodel.CashGapViewModel_HiltModules_KeyModule_Provide_LazyMapKey;
+import com.finance.assistant.ui.screens.viewmodel.FeedViewModel;
+import com.finance.assistant.ui.screens.viewmodel.FeedViewModel_HiltModules;
+import com.finance.assistant.ui.screens.viewmodel.FeedViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
+import com.finance.assistant.ui.screens.viewmodel.FeedViewModel_HiltModules_KeyModule_Provide_LazyMapKey;
+import com.finance.assistant.ui.screens.viewmodel.ForecastViewModel;
+import com.finance.assistant.ui.screens.viewmodel.ForecastViewModel_HiltModules;
+import com.finance.assistant.ui.screens.viewmodel.ForecastViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
+import com.finance.assistant.ui.screens.viewmodel.ForecastViewModel_HiltModules_KeyModule_Provide_LazyMapKey;
 import com.finance.assistant.ui.screens.viewmodel.HomeViewModel;
 import com.finance.assistant.ui.screens.viewmodel.HomeViewModel_HiltModules;
 import com.finance.assistant.ui.screens.viewmodel.HomeViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
 import com.finance.assistant.ui.screens.viewmodel.HomeViewModel_HiltModules_KeyModule_Provide_LazyMapKey;
+import com.finance.assistant.ui.screens.viewmodel.PaymentConfirmationViewModel;
+import com.finance.assistant.ui.screens.viewmodel.PaymentConfirmationViewModel_HiltModules;
+import com.finance.assistant.ui.screens.viewmodel.PaymentConfirmationViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
+import com.finance.assistant.ui.screens.viewmodel.PaymentConfirmationViewModel_HiltModules_KeyModule_Provide_LazyMapKey;
+import com.finance.assistant.ui.screens.viewmodel.RescheduleViewModel;
+import com.finance.assistant.ui.screens.viewmodel.RescheduleViewModel_HiltModules;
+import com.finance.assistant.ui.screens.viewmodel.RescheduleViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
+import com.finance.assistant.ui.screens.viewmodel.RescheduleViewModel_HiltModules_KeyModule_Provide_LazyMapKey;
+import com.google.gson.Gson;
 import dagger.hilt.android.ActivityRetainedLifecycle;
 import dagger.hilt.android.ViewModelLifecycle;
 import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
@@ -61,12 +72,12 @@ import dagger.internal.LazyClassKeyMap;
 import dagger.internal.MapBuilder;
 import dagger.internal.Preconditions;
 import dagger.internal.Provider;
-import io.objectbox.Box;
-import io.objectbox.BoxStore;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.processing.Generated;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 @DaggerGenerated
 @Generated(
@@ -402,7 +413,7 @@ public final class DaggerFinanceAssistantApp_HiltComponents_SingletonC {
 
     @Override
     public Map<Class<?>, Boolean> getViewModelKeys() {
-      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(2).put(AssistantViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, AssistantViewModel_HiltModules.KeyModule.provide()).put(HomeViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, HomeViewModel_HiltModules.KeyModule.provide()).build());
+      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(7).put(AssistantViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, AssistantViewModel_HiltModules.KeyModule.provide()).put(CashGapViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, CashGapViewModel_HiltModules.KeyModule.provide()).put(FeedViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, FeedViewModel_HiltModules.KeyModule.provide()).put(ForecastViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, ForecastViewModel_HiltModules.KeyModule.provide()).put(HomeViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, HomeViewModel_HiltModules.KeyModule.provide()).put(PaymentConfirmationViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, PaymentConfirmationViewModel_HiltModules.KeyModule.provide()).put(RescheduleViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, RescheduleViewModel_HiltModules.KeyModule.provide()).build());
     }
 
     @Override
@@ -430,7 +441,17 @@ public final class DaggerFinanceAssistantApp_HiltComponents_SingletonC {
 
     private Provider<AssistantViewModel> assistantViewModelProvider;
 
+    private Provider<CashGapViewModel> cashGapViewModelProvider;
+
+    private Provider<FeedViewModel> feedViewModelProvider;
+
+    private Provider<ForecastViewModel> forecastViewModelProvider;
+
     private Provider<HomeViewModel> homeViewModelProvider;
+
+    private Provider<PaymentConfirmationViewModel> paymentConfirmationViewModelProvider;
+
+    private Provider<RescheduleViewModel> rescheduleViewModelProvider;
 
     private ViewModelCImpl(SingletonCImpl singletonCImpl,
         ActivityRetainedCImpl activityRetainedCImpl, SavedStateHandle savedStateHandleParam,
@@ -446,12 +467,17 @@ public final class DaggerFinanceAssistantApp_HiltComponents_SingletonC {
     private void initialize(final SavedStateHandle savedStateHandleParam,
         final ViewModelLifecycle viewModelLifecycleParam) {
       this.assistantViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
-      this.homeViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
+      this.cashGapViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
+      this.feedViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
+      this.forecastViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
+      this.homeViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 4);
+      this.paymentConfirmationViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 5);
+      this.rescheduleViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 6);
     }
 
     @Override
     public Map<Class<?>, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(2).put(AssistantViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) assistantViewModelProvider)).put(HomeViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) homeViewModelProvider)).build());
+      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(7).put(AssistantViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) assistantViewModelProvider)).put(CashGapViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) cashGapViewModelProvider)).put(FeedViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) feedViewModelProvider)).put(ForecastViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) forecastViewModelProvider)).put(HomeViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) homeViewModelProvider)).put(PaymentConfirmationViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) paymentConfirmationViewModelProvider)).put(RescheduleViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) rescheduleViewModelProvider)).build());
     }
 
     @Override
@@ -481,10 +507,25 @@ public final class DaggerFinanceAssistantApp_HiltComponents_SingletonC {
       public T get() {
         switch (id) {
           case 0: // com.finance.assistant.ui.screens.viewmodel.AssistantViewModel 
-          return (T) new AssistantViewModel(singletonCImpl.chatRepositoryProvider.get(), singletonCImpl.assistantUseCaseProvider.get());
+          return (T) new AssistantViewModel(singletonCImpl.mockAssistantRepositoryProvider.get(), singletonCImpl.provideLLMRepositoryProvider.get());
 
-          case 1: // com.finance.assistant.ui.screens.viewmodel.HomeViewModel 
-          return (T) new HomeViewModel(singletonCImpl.transactionRepositoryProvider.get(), singletonCImpl.insightRepositoryProvider.get(), singletonCImpl.expenseRepositoryProvider.get());
+          case 1: // com.finance.assistant.ui.screens.viewmodel.CashGapViewModel 
+          return (T) new CashGapViewModel(singletonCImpl.cashGapDataRepositoryProvider.get());
+
+          case 2: // com.finance.assistant.ui.screens.viewmodel.FeedViewModel 
+          return (T) new FeedViewModel(singletonCImpl.feedDataRepositoryProvider.get());
+
+          case 3: // com.finance.assistant.ui.screens.viewmodel.ForecastViewModel 
+          return (T) new ForecastViewModel(singletonCImpl.forecastDataRepositoryProvider.get());
+
+          case 4: // com.finance.assistant.ui.screens.viewmodel.HomeViewModel 
+          return (T) new HomeViewModel(singletonCImpl.homeDataRepositoryProvider.get());
+
+          case 5: // com.finance.assistant.ui.screens.viewmodel.PaymentConfirmationViewModel 
+          return (T) new PaymentConfirmationViewModel(singletonCImpl.paymentConfirmationDataRepositoryProvider.get());
+
+          case 6: // com.finance.assistant.ui.screens.viewmodel.RescheduleViewModel 
+          return (T) new RescheduleViewModel(singletonCImpl.rescheduleDataRepositoryProvider.get());
 
           default: throw new AssertionError(id);
         }
@@ -566,37 +607,29 @@ public final class DaggerFinanceAssistantApp_HiltComponents_SingletonC {
 
     private final SingletonCImpl singletonCImpl = this;
 
-    private Provider<ObjectBoxManager> objectBoxManagerProvider;
+    private Provider<Gson> provideGsonProvider;
 
-    private Provider<BoxStore> provideBoxStoreProvider;
+    private Provider<MockAssistantRepository> mockAssistantRepositoryProvider;
 
-    private Provider<Box<ChatMessageEntity>> provideChatMessageBoxProvider;
+    private Provider<HttpLoggingInterceptor> provideLoggingInterceptorProvider;
 
-    private Provider<ChatRepository> chatRepositoryProvider;
+    private Provider<OkHttpClient> provideOkHttpClientProvider;
 
-    private Provider<Box<UserProfileEntity>> provideUserProfileBoxProvider;
+    private Provider<OllamaApiService> provideOllamaApiServiceProvider;
 
-    private Provider<UserRepository> userRepositoryProvider;
+    private Provider<LLMRepository> provideLLMRepositoryProvider;
 
-    private Provider<Box<UpcomingExpenseEntity>> provideUpcomingExpenseBoxProvider;
+    private Provider<CashGapDataRepository> cashGapDataRepositoryProvider;
 
-    private Provider<Box<RecurringExpenseEntity>> provideRecurringExpenseBoxProvider;
+    private Provider<FeedDataRepository> feedDataRepositoryProvider;
 
-    private Provider<ExpenseRepository> expenseRepositoryProvider;
+    private Provider<ForecastDataRepository> forecastDataRepositoryProvider;
 
-    private Provider<Box<FinanceCaseEntity>> provideFinanceCaseBoxProvider;
+    private Provider<HomeDataRepository> homeDataRepositoryProvider;
 
-    private Provider<CaseRepository> caseRepositoryProvider;
+    private Provider<PaymentConfirmationDataRepository> paymentConfirmationDataRepositoryProvider;
 
-    private Provider<BalanceForecastUseCase> balanceForecastUseCaseProvider;
-
-    private Provider<AssistantUseCase> assistantUseCaseProvider;
-
-    private Provider<FinanceDatabase> provideFinanceDatabaseProvider;
-
-    private Provider<TransactionRepository> transactionRepositoryProvider;
-
-    private Provider<InsightRepository> insightRepositoryProvider;
+    private Provider<RescheduleDataRepository> rescheduleDataRepositoryProvider;
 
     private SingletonCImpl(ApplicationContextModule applicationContextModuleParam) {
       this.applicationContextModule = applicationContextModuleParam;
@@ -604,32 +637,20 @@ public final class DaggerFinanceAssistantApp_HiltComponents_SingletonC {
 
     }
 
-    private TransactionDao transactionDao() {
-      return AppModule_ProvideTransactionDaoFactory.provideTransactionDao(provideFinanceDatabaseProvider.get());
-    }
-
-    private FinancialInsightDao financialInsightDao() {
-      return AppModule_ProvideFinancialInsightDaoFactory.provideFinancialInsightDao(provideFinanceDatabaseProvider.get());
-    }
-
     @SuppressWarnings("unchecked")
     private void initialize(final ApplicationContextModule applicationContextModuleParam) {
-      this.objectBoxManagerProvider = DoubleCheck.provider(new SwitchingProvider<ObjectBoxManager>(singletonCImpl, 3));
-      this.provideBoxStoreProvider = DoubleCheck.provider(new SwitchingProvider<BoxStore>(singletonCImpl, 2));
-      this.provideChatMessageBoxProvider = DoubleCheck.provider(new SwitchingProvider<Box<ChatMessageEntity>>(singletonCImpl, 1));
-      this.chatRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<ChatRepository>(singletonCImpl, 0));
-      this.provideUserProfileBoxProvider = DoubleCheck.provider(new SwitchingProvider<Box<UserProfileEntity>>(singletonCImpl, 6));
-      this.userRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<UserRepository>(singletonCImpl, 5));
-      this.provideUpcomingExpenseBoxProvider = DoubleCheck.provider(new SwitchingProvider<Box<UpcomingExpenseEntity>>(singletonCImpl, 8));
-      this.provideRecurringExpenseBoxProvider = DoubleCheck.provider(new SwitchingProvider<Box<RecurringExpenseEntity>>(singletonCImpl, 9));
-      this.expenseRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<ExpenseRepository>(singletonCImpl, 7));
-      this.provideFinanceCaseBoxProvider = DoubleCheck.provider(new SwitchingProvider<Box<FinanceCaseEntity>>(singletonCImpl, 11));
-      this.caseRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<CaseRepository>(singletonCImpl, 10));
-      this.balanceForecastUseCaseProvider = DoubleCheck.provider(new SwitchingProvider<BalanceForecastUseCase>(singletonCImpl, 12));
-      this.assistantUseCaseProvider = DoubleCheck.provider(new SwitchingProvider<AssistantUseCase>(singletonCImpl, 4));
-      this.provideFinanceDatabaseProvider = DoubleCheck.provider(new SwitchingProvider<FinanceDatabase>(singletonCImpl, 14));
-      this.transactionRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<TransactionRepository>(singletonCImpl, 13));
-      this.insightRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<InsightRepository>(singletonCImpl, 15));
+      this.provideGsonProvider = DoubleCheck.provider(new SwitchingProvider<Gson>(singletonCImpl, 1));
+      this.mockAssistantRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<MockAssistantRepository>(singletonCImpl, 0));
+      this.provideLoggingInterceptorProvider = DoubleCheck.provider(new SwitchingProvider<HttpLoggingInterceptor>(singletonCImpl, 5));
+      this.provideOkHttpClientProvider = DoubleCheck.provider(new SwitchingProvider<OkHttpClient>(singletonCImpl, 4));
+      this.provideOllamaApiServiceProvider = DoubleCheck.provider(new SwitchingProvider<OllamaApiService>(singletonCImpl, 3));
+      this.provideLLMRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<LLMRepository>(singletonCImpl, 2));
+      this.cashGapDataRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<CashGapDataRepository>(singletonCImpl, 6));
+      this.feedDataRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<FeedDataRepository>(singletonCImpl, 7));
+      this.forecastDataRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<ForecastDataRepository>(singletonCImpl, 8));
+      this.homeDataRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<HomeDataRepository>(singletonCImpl, 9));
+      this.paymentConfirmationDataRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<PaymentConfirmationDataRepository>(singletonCImpl, 10));
+      this.rescheduleDataRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<RescheduleDataRepository>(singletonCImpl, 11));
     }
 
     @Override
@@ -665,53 +686,41 @@ public final class DaggerFinanceAssistantApp_HiltComponents_SingletonC {
       @Override
       public T get() {
         switch (id) {
-          case 0: // com.finance.assistant.data.repository.ChatRepository 
-          return (T) new ChatRepository(singletonCImpl.provideChatMessageBoxProvider.get());
+          case 0: // com.finance.assistant.data.repository.MockAssistantRepository 
+          return (T) new MockAssistantRepository(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.provideGsonProvider.get());
 
-          case 1: // io.objectbox.Box<com.finance.assistant.data.objectbox.entity.session.ChatMessageEntity> 
-          return (T) ObjectBoxModule_ProvideChatMessageBoxFactory.provideChatMessageBox(singletonCImpl.provideBoxStoreProvider.get());
+          case 1: // com.google.gson.Gson 
+          return (T) LLMModule_ProvideGsonFactory.provideGson();
 
-          case 2: // io.objectbox.BoxStore 
-          return (T) ObjectBoxModule_ProvideBoxStoreFactory.provideBoxStore(singletonCImpl.objectBoxManagerProvider.get());
+          case 2: // com.finance.assistant.data.repository.LLMRepository 
+          return (T) LLMModule_ProvideLLMRepositoryFactory.provideLLMRepository(singletonCImpl.provideOllamaApiServiceProvider.get(), singletonCImpl.provideGsonProvider.get(), LLMModule_ProvideOllamaModelNameFactory.provideOllamaModelName());
 
-          case 3: // com.finance.assistant.data.objectbox.ObjectBoxManager 
-          return (T) new ObjectBoxManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+          case 3: // com.finance.assistant.data.remote.OllamaApiService 
+          return (T) LLMModule_ProvideOllamaApiServiceFactory.provideOllamaApiService(singletonCImpl.provideOkHttpClientProvider.get(), LLMModule_ProvideOllamaBaseUrlFactory.provideOllamaBaseUrl(), singletonCImpl.provideGsonProvider.get());
 
-          case 4: // com.finance.assistant.domain.usecase.AssistantUseCase 
-          return (T) new AssistantUseCase(singletonCImpl.chatRepositoryProvider.get(), singletonCImpl.userRepositoryProvider.get(), singletonCImpl.expenseRepositoryProvider.get(), singletonCImpl.caseRepositoryProvider.get(), singletonCImpl.balanceForecastUseCaseProvider.get());
+          case 4: // okhttp3.OkHttpClient 
+          return (T) LLMModule_ProvideOkHttpClientFactory.provideOkHttpClient(singletonCImpl.provideLoggingInterceptorProvider.get());
 
-          case 5: // com.finance.assistant.data.repository.UserRepository 
-          return (T) new UserRepository(singletonCImpl.provideUserProfileBoxProvider.get());
+          case 5: // okhttp3.logging.HttpLoggingInterceptor 
+          return (T) LLMModule_ProvideLoggingInterceptorFactory.provideLoggingInterceptor();
 
-          case 6: // io.objectbox.Box<com.finance.assistant.data.objectbox.entity.UserProfileEntity> 
-          return (T) ObjectBoxModule_ProvideUserProfileBoxFactory.provideUserProfileBox(singletonCImpl.provideBoxStoreProvider.get());
+          case 6: // com.finance.assistant.data.repository.CashGapDataRepository 
+          return (T) new CashGapDataRepository(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.provideGsonProvider.get());
 
-          case 7: // com.finance.assistant.data.repository.ExpenseRepository 
-          return (T) new ExpenseRepository(singletonCImpl.provideUpcomingExpenseBoxProvider.get(), singletonCImpl.provideRecurringExpenseBoxProvider.get());
+          case 7: // com.finance.assistant.data.repository.FeedDataRepository 
+          return (T) new FeedDataRepository(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.provideGsonProvider.get());
 
-          case 8: // io.objectbox.Box<com.finance.assistant.data.objectbox.entity.UpcomingExpenseEntity> 
-          return (T) ObjectBoxModule_ProvideUpcomingExpenseBoxFactory.provideUpcomingExpenseBox(singletonCImpl.provideBoxStoreProvider.get());
+          case 8: // com.finance.assistant.data.repository.ForecastDataRepository 
+          return (T) new ForecastDataRepository(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.provideGsonProvider.get());
 
-          case 9: // io.objectbox.Box<com.finance.assistant.data.objectbox.entity.RecurringExpenseEntity> 
-          return (T) ObjectBoxModule_ProvideRecurringExpenseBoxFactory.provideRecurringExpenseBox(singletonCImpl.provideBoxStoreProvider.get());
+          case 9: // com.finance.assistant.data.repository.HomeDataRepository 
+          return (T) new HomeDataRepository(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.provideGsonProvider.get());
 
-          case 10: // com.finance.assistant.data.repository.CaseRepository 
-          return (T) new CaseRepository(singletonCImpl.provideFinanceCaseBoxProvider.get(), singletonCImpl.provideUpcomingExpenseBoxProvider.get());
+          case 10: // com.finance.assistant.data.repository.PaymentConfirmationDataRepository 
+          return (T) new PaymentConfirmationDataRepository(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.provideGsonProvider.get());
 
-          case 11: // io.objectbox.Box<com.finance.assistant.data.objectbox.entity.session.FinanceCaseEntity> 
-          return (T) ObjectBoxModule_ProvideFinanceCaseBoxFactory.provideFinanceCaseBox(singletonCImpl.provideBoxStoreProvider.get());
-
-          case 12: // com.finance.assistant.domain.usecase.BalanceForecastUseCase 
-          return (T) new BalanceForecastUseCase(singletonCImpl.userRepositoryProvider.get(), singletonCImpl.expenseRepositoryProvider.get());
-
-          case 13: // com.finance.assistant.data.repository.TransactionRepository 
-          return (T) new TransactionRepository(singletonCImpl.transactionDao());
-
-          case 14: // com.finance.assistant.data.local.FinanceDatabase 
-          return (T) AppModule_ProvideFinanceDatabaseFactory.provideFinanceDatabase(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
-
-          case 15: // com.finance.assistant.data.repository.InsightRepository 
-          return (T) new InsightRepository(singletonCImpl.financialInsightDao());
+          case 11: // com.finance.assistant.data.repository.RescheduleDataRepository 
+          return (T) new RescheduleDataRepository(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.provideGsonProvider.get());
 
           default: throw new AssertionError(id);
         }

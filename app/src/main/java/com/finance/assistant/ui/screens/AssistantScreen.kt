@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -52,8 +54,17 @@ import com.finance.assistant.ui.theme.SurfaceGray
 import com.finance.assistant.ui.theme.TextSecondary
 
 @Composable
-fun AssistantScreen(viewModel: AssistantViewModel = hiltViewModel()) {
+fun AssistantScreen(
+    viewModel: AssistantViewModel = hiltViewModel(),
+    initialInputText: String = "",
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(initialInputText) {
+        if (initialInputText.isNotBlank()) {
+            viewModel.setInitialTextAndSend(initialInputText)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -74,11 +85,30 @@ fun AssistantScreen(viewModel: AssistantViewModel = hiltViewModel()) {
             onActionClick = { messageId, action -> viewModel.executeAction(messageId, action) },
             modifier = Modifier.weight(1f),
         )
+        if (uiState.isLoading) {
+            LoadingIndicator()
+        }
         ChatInputBar(
             inputText = uiState.inputText,
             isLoading = uiState.isLoading,
             onInputChanged = viewModel::onInputChanged,
             onSend = viewModel::sendMessage,
+        )
+    }
+}
+
+@Composable
+private fun LoadingIndicator() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(24.dp),
+            color = DangerRed,
+            strokeWidth = 2.dp,
         )
     }
 }

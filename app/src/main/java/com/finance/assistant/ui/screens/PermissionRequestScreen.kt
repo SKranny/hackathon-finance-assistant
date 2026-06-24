@@ -1,10 +1,6 @@
 package com.finance.assistant.ui.screens
 
 import android.Manifest
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
-import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,10 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import com.finance.assistant.MainActivity
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -45,8 +38,6 @@ fun PermissionRequestScreen(
     onSkip: () -> Unit,
     showDeniedMessage: Boolean = false,
 ) {
-    val context = LocalContext.current
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -103,20 +94,6 @@ fun PermissionRequestScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Button(
-            onClick = {
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = Uri.fromParts("package", context.packageName, null)
-                }
-                context.startActivity(intent)
-            },
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text("Открыть настройки")
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
@@ -125,13 +102,7 @@ fun PermissionRequestScreen(
                 Text("Пропустить")
             }
             Spacer(modifier = Modifier.width(12.dp))
-            Button(
-                onClick = {
-                    context.startActivity(Intent(context, MainActivity::class.java).apply {
-                        flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    })
-                },
-            ) {
+            Button(onClick = onPermissionsGranted) {
                 Text("Предоставить")
             }
         }

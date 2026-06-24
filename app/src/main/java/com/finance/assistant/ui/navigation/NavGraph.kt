@@ -20,9 +20,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.finance.assistant.ui.screens.AssistantScreen
+import com.finance.assistant.ui.screens.CashGapDetailScreen
 import com.finance.assistant.ui.screens.FeedScreen
 import com.finance.assistant.ui.screens.ForecastScreen
 import com.finance.assistant.ui.screens.HomeScreen
+import com.finance.assistant.ui.screens.PaymentConfirmationScreen
+import com.finance.assistant.ui.screens.ReschedulePaymentScreen
+
+object InitialTextHolder {
+    var text: String = ""
+}
 
 data class BottomNavItem(
     val label: String,
@@ -42,24 +49,34 @@ fun NavGraph(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
+    val bottomBarScreens = listOf(
+        Screen.Home.route,
+        Screen.Feed.route,
+        Screen.Assistant.route,
+        Screen.Forecast.route,
+    )
+    val showBottomBar = currentRoute in bottomBarScreens
+
     Scaffold(
         bottomBar = {
-            NavigationBar {
-                bottomNavItems.forEach { item ->
-                    NavigationBarItem(
-                        selected = currentRoute == item.screen.route,
-                        onClick = {
-                            if (currentRoute != item.screen.route) {
-                                navController.navigate(item.screen.route) {
-                                    popUpTo(Screen.Home.route) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
+            if (showBottomBar) {
+                NavigationBar {
+                    bottomNavItems.forEach { item ->
+                        NavigationBarItem(
+                            selected = currentRoute == item.screen.route,
+                            onClick = {
+                                if (currentRoute != item.screen.route) {
+                                    navController.navigate(item.screen.route) {
+                                        popUpTo(Screen.Home.route) { saveState = true }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
                                 }
-                            }
-                        },
-                        icon = { Icon(item.icon, contentDescription = item.label) },
-                        label = { Text(item.label) },
-                    )
+                            },
+                            icon = { Icon(item.icon, contentDescription = item.label) },
+                            label = { Text(item.label) },
+                        )
+                    }
                 }
             }
         },
@@ -69,10 +86,65 @@ fun NavGraph(navController: NavHostController) {
             startDestination = Screen.Home.route,
             modifier = Modifier.padding(innerPadding),
         ) {
-            composable(Screen.Home.route) { HomeScreen() }
+            composable(Screen.Home.route) {
+                HomeScreen(
+                    onNavigateToCashGapDetail = {
+                        navController.navigate(Screen.CashGapDetail.route)
+                    },
+                )
+            }
             composable(Screen.Feed.route) { FeedScreen() }
-            composable(Screen.Assistant.route) { AssistantScreen() }
-            composable(Screen.Forecast.route) { ForecastScreen() }
+            composable(Screen.Assistant.route) { backStackEntry ->
+                val initialText = InitialTextHolder.text
+                InitialTextHolder.text = ""
+                AssistantScreen(initialInputText = initialText)
+            }
+            composable(Screen.Forecast.route) {
+                ForecastScreen(
+                    onNavigateToAssistant = {
+                        InitialTextHolder.text = "Как закрыть разрыв"
+                        navController.navigate(Screen.Assistant.route) {
+                            popUpTo(Screen.Home.route) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                )
+            }
+            composable(Screen.CashGapDetail.route) {
+                CashGapDetailScreen(
+                    onBack = { navController.popBackStack() },
+                    onPrimaryAction = {
+                        navController.navigate(Screen.ReschedulePayment.route)
+                    },
+                )
+            }
+            composable(Screen.ReschedulePayment.route) {
+                ReschedulePaymentScreen(
+                    onBack = { navController.popBackStack() },
+                    onConfirm = {
+                        navController.navigate(Screen.PaymentConfirmation.route) {
+                            popUpTo(Screen.Home.route)
+                        }
+                    },
+                )
+            }
+            composable(Screen.PaymentConfirmation.route) {
+                PaymentConfirmationScreen(
+                    onGoHome = {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Home.route) { inclusive = true }
+                        }
+                    },
+                    onGoToFeed = {
+                        navController.navigate(Screen.Feed.route) {
+                            popUpTo(Screen.Home.route) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                )
+            }
         }
     }
 }

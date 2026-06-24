@@ -1,0 +1,49 @@
+{
+  "header": {
+    "title": "Кассовый разрыв"
+  },
+  "alertCard": {
+    "dateLabel": "28–30 июня",
+    "description": "Спишется 112 000 ₽. Останется ≈18 000 ₽ — до зарплаты 10 июля не хватит ≈40 000 ₽."
+  },
+  "expenses": [
+    {
+      "id": 1,
+      "title": "Садик ребёнка",
+      "subtitle": "28 июня · из календаря",
+      "amount": -27000.00,
+      "amountColor": "default"
+    },
+    {
+      "id": 2,
+      "title": "Ипотека",
+      "subtitle": "30 июня · чек из почты",
+      "amount": -85000.00,
+      "amountColor": "danger"
+    }
+  ],
+  "suggestionsHeader": "Что можно сделать",
+  "suggestions": [
+    {
+      "id": 1,
+      "isRecommended": true,
+      "title": "Перенести оплату садика",
+      "description": "На 11 июля — после зарплаты. Разрыв закрывается полностью, без процентов."
+    },
+    {
+      "id": 2,
+      "isRecommended": false,
+      "title": "Короткий лимит до зарплаты",
+      "description": "40 000 ₽ на 16 дней. 0 ₽ переплаты в льготный период."
+    },
+    {
+      "id": 3,
+      "isRecommended": false,
+      "title": "Перевести из накоплений",
+      "description": "40 000 ₽ из «Подушки». Останется 160 000 ₽."
+    }
+  ],
+  "primaryAction": {
+    "label": "Перенести садик на 11 июля"
+  }
+}

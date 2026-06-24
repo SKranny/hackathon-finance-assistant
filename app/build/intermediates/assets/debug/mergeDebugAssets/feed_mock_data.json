@@ -1,0 +1,53 @@
+{
+  "header": {
+    "title": "Лента",
+    "subtitle": "инсайтов от помощника"
+  },
+  "insights": [
+    {
+      "id": 1,
+      "caseNumber": 1,
+      "type": "URGENT",
+      "label": "Срочно · через 16 дней",
+      "title": "Кассовый разрыв до зарплаты",
+      "description": "28–30 июня уйдёт 112 000 ₽, не хватит ≈40 000 ₽.",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": 2,
+      "caseNumber": 2,
+      "type": "ZOMBIE_SUBSCRIPTION",
+      "label": "Подписки-зомби",
+      "title": "4 подписки на 3 200 ₽/мес",
+      "description": "Двумя ты не пользуешься с марта. 38 400 ₽ в год.",
+      "severity": "WARNING"
+    },
+    {
+      "id": 3,
+      "caseNumber": 3,
+      "type": "LARGE_PURCHASE",
+      "label": "Крупная покупка · 15 июля",
+      "title": "ТО машины — 60 000 ₽",
+      "description": "Предлагаю отложить 15 000 ₽ × 4 недели.",
+      "severity": "INFO"
+    },
+    {
+      "id": 4,
+      "caseNumber": 4,
+      "type": "TRIP",
+      "label": "Поездка · 5–7 июля",
+      "title": "Алматы → Астана",
+      "description": "Прошлые поездки: ~25 000 ₽ сверх обычного.",
+      "severity": "INFO"
+    },
+    {
+      "id": 5,
+      "caseNumber": 5,
+      "type": "DEADLINE",
+      "label": "Дедлайн · через 10 дней",
+      "title": "Налог 45 000 ₽",
+      "description": "На счёте 30 000 ₽. Не хватает 15 000 ₽.",
+      "severity": "WARNING"
+    }
+  ]
+}

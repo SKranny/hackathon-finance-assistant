@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,6 +23,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.finance.assistant.data.model.InsightData
+import com.finance.assistant.ui.screens.viewmodel.FeedViewModel
 import com.finance.assistant.ui.theme.DangerRed
 import com.finance.assistant.ui.theme.DangerRedBorder
 import com.finance.assistant.ui.theme.DangerRedSurface
@@ -36,14 +41,22 @@ import com.finance.assistant.ui.theme.WarnAmberBorder
 import com.finance.assistant.ui.theme.WarnAmberSurface
 
 @Composable
-fun FeedScreen() {
+fun FeedScreen(
+    viewModel: FeedViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(SurfaceGray),
     ) {
-        FeedHeader()
+        FeedHeader(
+            title = uiState.header?.title ?: "",
+            subtitle = "${uiState.insights.size} ${uiState.header?.subtitle ?: ""}"
+        )
         InsightCardList(
+            insights = uiState.insights,
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
@@ -52,7 +65,10 @@ fun FeedScreen() {
 }
 
 @Composable
-private fun FeedHeader() {
+private fun FeedHeader(
+    title: String,
+    subtitle: String,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -61,7 +77,7 @@ private fun FeedHeader() {
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         Text(
-            text = "Лента",
+            text = title,
             fontSize = 24.sp,
             fontWeight = FontWeight.ExtraBold,
             color = DarkNearBlack,
@@ -69,7 +85,7 @@ private fun FeedHeader() {
             lineHeight = (24 * 1.35).sp,
         )
         Text(
-            text = "5 инсайтов от помощника",
+            text = subtitle,
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
             color = TextSecondary,
@@ -79,70 +95,31 @@ private fun FeedHeader() {
 }
 
 @Composable
-private fun InsightCardList(modifier: Modifier = Modifier) {
+private fun InsightCardList(
+    insights: List<InsightData>,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier
             .background(Color.White)
             .padding(start = 18.dp, end = 18.dp, top = 16.dp, bottom = 8.dp),
         verticalArrangement = Arrangement.spacedBy(13.dp),
     ) {
-        InsightCard(
-            label = "Кейс 1 · Срочно · через 6 дней",
-            labelColor = DangerRed,
-            iconBackground = DangerRedSurface,
-            borderColor = DangerRedBorder,
-            title = "Кассовый разрыв до зарплаты",
-            description = "3–5 июня уйдёт 112 000 ₽, не хватит ≈40 000 ₽.",
-        )
-        InsightCard(
-            label = "Кейс 2 · Подписки-зомби",
-            labelColor = WarnAmber,
-            iconBackground = WarnAmberSurface,
-            borderColor = WarnAmberBorder,
-            title = "4 подписки на 3 200 ₽/мес",
-            description = "Двумя ты не пользуешься с марта. 38 400 ₽ в год.",
-        )
-        InsightCard(
-            label = "Кейс 3 · Крупная покупка · 28 июня",
-            labelColor = InsightBlue,
-            iconBackground = InsightBlueSurface,
-            borderColor = InsightBlueBorder,
-            title = "ТО машины — 60 000 ₽",
-            description = "Предлагаю отложить 15 000 ₽ × 4 недели.",
-        )
-        InsightCard(
-            label = "Кейс 4 · Поездка · 24–26 июня",
-            labelColor = InsightBlue,
-            iconBackground = InsightBlueSurface,
-            borderColor = InsightBlueBorder,
-            title = "Алматы → Астана",
-            description = "Прошлые поездки: ~25 000 ₽ сверх обычного.",
-        )
-        InsightCard(
-            label = "Кейс 5 · Дедлайн · через 5 дней",
-            labelColor = WarnAmber,
-            iconBackground = WarnAmberSurface,
-            borderColor = WarnAmberBorder,
-            title = "Налог 45 000 ₽",
-            description = "На счёте 30 000 ₽. Не хватает 15 000 ₽.",
-        )
+        insights.forEach { insight ->
+            InsightCard(insight = insight)
+        }
     }
 }
 
 @Composable
-private fun InsightCard(
-    label: String,
-    labelColor: Color,
-    iconBackground: Color,
-    borderColor: Color,
-    title: String,
-    description: String,
-) {
+private fun InsightCard(insight: InsightData) {
+    val colors = getInsightColors(insight.severity)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
-            .border(1.dp, borderColor, RoundedCornerShape(20.dp))
+            .border(1.dp, colors.border, RoundedCornerShape(20.dp))
             .background(Color.White)
             .padding(15.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -155,18 +132,18 @@ private fun InsightCard(
                 modifier = Modifier
                     .size(30.dp)
                     .clip(RoundedCornerShape(9.dp))
-                    .background(iconBackground),
+                    .background(colors.iconBackground),
             )
             Text(
-                text = label,
+                text = "Кейс ${insight.caseNumber} · ${insight.label}",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
-                color = labelColor,
+                color = colors.label,
                 lineHeight = (12 * 1.35).sp,
             )
         }
         Text(
-            text = title,
+            text = insight.title,
             fontSize = 16.sp,
             fontWeight = FontWeight.ExtraBold,
             color = DarkNearBlack,
@@ -174,12 +151,38 @@ private fun InsightCard(
             modifier = Modifier.fillMaxWidth(),
         )
         Text(
-            text = description,
+            text = insight.description,
             fontSize = 13.sp,
             fontWeight = FontWeight.Normal,
             color = TextSecondary,
             lineHeight = (13 * 1.45).sp,
             modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
+private data class InsightColors(
+    val label: Color,
+    val iconBackground: Color,
+    val border: Color,
+)
+
+private fun getInsightColors(severity: String): InsightColors {
+    return when (severity.uppercase()) {
+        "CRITICAL" -> InsightColors(
+            label = DangerRed,
+            iconBackground = DangerRedSurface,
+            border = DangerRedBorder,
+        )
+        "WARNING" -> InsightColors(
+            label = WarnAmber,
+            iconBackground = WarnAmberSurface,
+            border = WarnAmberBorder,
+        )
+        else -> InsightColors(
+            label = InsightBlue,
+            iconBackground = InsightBlueSurface,
+            border = InsightBlueBorder,
         )
     }
 }

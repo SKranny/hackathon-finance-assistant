@@ -1,0 +1,21 @@
+{
+  "header": {
+    "title": "Перенос платежа"
+  },
+  "dateReschedule": {
+    "originalDate": "28 июня",
+    "newDate": "11 июля",
+    "originalDateLabel": "было",
+    "newDateLabel": "станет"
+  },
+  "payment": {
+    "name": "Оплата садика",
+    "amount": "27 000 ₽",
+    "account": "··4416 · Альфа",
+    "overpayment": "0 ₽"
+  },
+  "infoMessage": "После переноса баланс не уйдёт в минус.\nРазрыв закрыт.",
+  "confirmButton": {
+    "label": "Подтвердить"
+  }
+}

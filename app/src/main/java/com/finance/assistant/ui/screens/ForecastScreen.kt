@@ -18,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -27,9 +28,11 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.finance.assistant.ui.screens.viewmodel.ForecastViewModel
 import com.finance.assistant.ui.theme.DangerRed
 import com.finance.assistant.ui.theme.DangerRedBorder
 import com.finance.assistant.ui.theme.DangerRedSurface
@@ -38,21 +41,23 @@ import com.finance.assistant.ui.theme.SuccessGreen
 import com.finance.assistant.ui.theme.SurfaceGray
 import com.finance.assistant.ui.theme.TextSecondary
 
-// Original Figma design coordinate space for the chart area
 private const val CHART_DESIGN_WIDTH = 320f
 private const val CHART_DESIGN_HEIGHT = 190f
-
-// Zero-balance baseline y position in design space
 private const val BASELINE_Y_DESIGN = 120f
 
 @Composable
-fun ForecastScreen() {
+fun ForecastScreen(
+    viewModel: ForecastViewModel = hiltViewModel(),
+    onNavigateToAssistant: () -> Unit = {},
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val data = uiState.data
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(SurfaceGray)
     ) {
-        // Screen title
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -60,7 +65,7 @@ fun ForecastScreen() {
                 .padding(start = 22.dp, end = 22.dp, top = 2.dp, bottom = 14.dp)
         ) {
             Text(
-                text = "Прогноз баланса",
+                text = data?.header?.title ?: "Прогноз баланса",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = DarkNearBlack,
@@ -68,22 +73,43 @@ fun ForecastScreen() {
             )
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            ForecastChartCard()
-            ForecastAlertCard()
-            CloseGapButton()
+        if (data != null) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                ForecastChartCard(
+                    title = data.chart.title,
+                    minBalance = data.chart.minBalance,
+                    xAxisLabels = data.chart.xAxisLabels,
+                    gapLabel = data.chart.gapLabel,
+                    salaryLabel = data.chart.salaryLabel,
+                )
+                ForecastAlertCard(
+                    minBalanceLabel = data.alert.minBalanceLabel,
+                    minBalanceValue = data.alert.minBalanceValue,
+                    description = data.alert.description
+                )
+                CloseGapButton(
+                    label = data.action.label,
+                    onClick = onNavigateToAssistant,
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun ForecastChartCard() {
+private fun ForecastChartCard(
+    title: String,
+    minBalance: String,
+    xAxisLabels: List<String>,
+    gapLabel: String,
+    salaryLabel: String,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -97,33 +123,35 @@ private fun ForecastChartCard() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Следующие 14 дней",
+                text = title,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextSecondary
             )
-            MinBalanceBadge()
+            MinBalanceBadge(text = minBalance)
         }
 
         BalanceForecastChart(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(190.dp)
+                .height(190.dp),
+            gapLabel = gapLabel,
+            salaryLabel = salaryLabel,
         )
 
-        ChartXAxisLabels()
+        ChartXAxisLabels(labels = xAxisLabels)
     }
 }
 
 @Composable
-private fun MinBalanceBadge() {
+private fun MinBalanceBadge(text: String) {
     Box(
         modifier = Modifier
             .background(DangerRedSurface, RoundedCornerShape(99.dp))
             .padding(horizontal = 9.dp, vertical = 4.dp)
     ) {
         Text(
-            text = "мин. −40 000 ₽",
+            text = text,
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             color = DangerRed
@@ -132,7 +160,11 @@ private fun MinBalanceBadge() {
 }
 
 @Composable
-private fun BalanceForecastChart(modifier: Modifier = Modifier) {
+private fun BalanceForecastChart(
+    modifier: Modifier = Modifier,
+    gapLabel: String,
+    salaryLabel: String,
+) {
     BoxWithConstraints(modifier = modifier) {
         val chartWidth = maxWidth
         val chartHeight = maxHeight
@@ -141,7 +173,6 @@ private fun BalanceForecastChart(modifier: Modifier = Modifier) {
             fun sx(designX: Float) = designX / CHART_DESIGN_WIDTH * size.width
             fun sy(designY: Float) = designY / CHART_DESIGN_HEIGHT * size.height
 
-            // Zero-balance horizontal rule
             drawLine(
                 color = Color(0xFFE7E7EA),
                 start = Offset(0f, sy(BASELINE_Y_DESIGN)),
@@ -155,8 +186,6 @@ private fun BalanceForecastChart(modifier: Modifier = Modifier) {
                 join = StrokeJoin.Round
             )
 
-            // Green forecast line — covers full path including the gap region (overdrawn by red below)
-            // Design absolute coordinates derived from SVG at offset (0, 36): y = 36 + svgY
             val greenPath = Path().apply {
                 moveTo(sx(0f), sy(70f))
                 lineTo(sx(55f), sy(80f))
@@ -170,8 +199,6 @@ private fun BalanceForecastChart(modifier: Modifier = Modifier) {
             }
             drawPath(greenPath, SuccessGreen, style = lineStroke)
 
-            // Red line — dip below baseline, drawn on top to replace the green in the gap region
-            // Design absolute coordinates derived from SVG at offset (138, 120): y = 120 + svgY
             val redPath = Path().apply {
                 moveTo(sx(138f), sy(120f))
                 lineTo(sx(161f), sy(150f))
@@ -180,14 +207,12 @@ private fun BalanceForecastChart(modifier: Modifier = Modifier) {
             }
             drawPath(redPath, DangerRed, style = lineStroke)
 
-            // Red dot at the deepest gap point
             drawCircle(
                 color = DangerRed,
                 radius = 5.dp.toPx(),
                 center = Offset(sx(177f), sy(150f))
             )
 
-            // Green dot at salary income point
             drawCircle(
                 color = SuccessGreen,
                 radius = 5.dp.toPx(),
@@ -195,9 +220,8 @@ private fun BalanceForecastChart(modifier: Modifier = Modifier) {
             )
         }
 
-        // "зарплата" label above the salary dot — design position: left=238, top=18
         Text(
-            text = "зарплата",
+            text = salaryLabel,
             fontSize = 10.sp,
             fontWeight = FontWeight.Bold,
             color = SuccessGreen,
@@ -207,9 +231,8 @@ private fun BalanceForecastChart(modifier: Modifier = Modifier) {
             )
         )
 
-        // "9 июня" label below the gap dot — design position: left=148, top=160
         Text(
-            text = "9 июня",
+            text = gapLabel,
             fontSize = 10.sp,
             fontWeight = FontWeight.Bold,
             color = DangerRed,
@@ -222,14 +245,14 @@ private fun BalanceForecastChart(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ChartXAxisLabels() {
+private fun ChartXAxisLabels(labels: List<String>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        listOf("сегодня", "5 июня", "10 июня", "15").forEach { label ->
+        labels.forEach { label ->
             Text(
                 text = label,
                 fontSize = 11.sp,
@@ -241,7 +264,11 @@ private fun ChartXAxisLabels() {
 }
 
 @Composable
-private fun ForecastAlertCard() {
+private fun ForecastAlertCard(
+    minBalanceLabel: String,
+    minBalanceValue: String,
+    description: String,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -255,13 +282,13 @@ private fun ForecastAlertCard() {
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Text(
-                text = "провал",
+                text = minBalanceLabel,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 color = DangerRed
             )
             Text(
-                text = "−40k",
+                text = minBalanceValue,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = DangerRed
@@ -276,7 +303,7 @@ private fun ForecastAlertCard() {
         )
 
         Text(
-            text = "9 июня баланс уйдёт в минус. Причина — автоплатёж по ипотеке 5 июня.",
+            text = description,
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
             color = DarkNearBlack,
@@ -287,9 +314,9 @@ private fun ForecastAlertCard() {
 }
 
 @Composable
-private fun CloseGapButton() {
+private fun CloseGapButton(label: String, onClick: () -> Unit) {
     Button(
-        onClick = {},
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp),
@@ -297,16 +324,10 @@ private fun CloseGapButton() {
         colors = ButtonDefaults.buttonColors(containerColor = DangerRed)
     ) {
         Text(
-            text = "Как закрыть разрыв",
+            text = label,
             fontSize = 17.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun ForecastScreenPreview() {
-    ForecastScreen()
 }

@@ -1,10 +1,16 @@
 package com.finance.assistant;
 
 import com.finance.assistant.di.AppModule;
+import com.finance.assistant.di.LLMModule;
 import com.finance.assistant.di.ObjectBoxModule;
 import com.finance.assistant.di.ServiceModule;
 import com.finance.assistant.ui.screens.viewmodel.AssistantViewModel_HiltModules;
+import com.finance.assistant.ui.screens.viewmodel.CashGapViewModel_HiltModules;
+import com.finance.assistant.ui.screens.viewmodel.FeedViewModel_HiltModules;
+import com.finance.assistant.ui.screens.viewmodel.ForecastViewModel_HiltModules;
 import com.finance.assistant.ui.screens.viewmodel.HomeViewModel_HiltModules;
+import com.finance.assistant.ui.screens.viewmodel.PaymentConfirmationViewModel_HiltModules;
+import com.finance.assistant.ui.screens.viewmodel.RescheduleViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -134,6 +140,7 @@ public final class FinanceAssistantApp_HiltComponents {
           ActivityRetainedCBuilderModule.class,
           ServiceCBuilderModule.class,
           HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
+          LLMModule.class,
           ObjectBoxModule.class,
           ServiceModule.class
       }
@@ -159,11 +166,16 @@ public final class FinanceAssistantApp_HiltComponents {
   @Subcomponent(
       modules = {
           AssistantViewModel_HiltModules.KeyModule.class,
+          CashGapViewModel_HiltModules.KeyModule.class,
+          FeedViewModel_HiltModules.KeyModule.class,
           ActivityCBuilderModule.class,
           ViewModelCBuilderModule.class,
+          ForecastViewModel_HiltModules.KeyModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
-          HomeViewModel_HiltModules.KeyModule.class
+          HomeViewModel_HiltModules.KeyModule.class,
+          PaymentConfirmationViewModel_HiltModules.KeyModule.class,
+          RescheduleViewModel_HiltModules.KeyModule.class
       }
   )
   @ActivityRetainedScoped
@@ -200,8 +212,13 @@ public final class FinanceAssistantApp_HiltComponents {
   @Subcomponent(
       modules = {
           AssistantViewModel_HiltModules.BindsModule.class,
+          CashGapViewModel_HiltModules.BindsModule.class,
+          FeedViewModel_HiltModules.BindsModule.class,
+          ForecastViewModel_HiltModules.BindsModule.class,
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
-          HomeViewModel_HiltModules.BindsModule.class
+          HomeViewModel_HiltModules.BindsModule.class,
+          PaymentConfirmationViewModel_HiltModules.BindsModule.class,
+          RescheduleViewModel_HiltModules.BindsModule.class
       }
   )
   @ViewModelScoped

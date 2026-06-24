@@ -1,0 +1,20 @@
+{
+  "header": {
+    "title": "Прогноз баланса"
+  },
+  "chart": {
+    "title": "Следующие 14 дней",
+    "minBalance": "−40 000 ₽",
+    "xAxisLabels": ["сегодня", "30 июн", "5 июл", "8 июл"],
+    "gapLabel": "1 июл",
+    "salaryLabel": "зарплата"
+  },
+  "alert": {
+    "minBalanceLabel": "провал",
+    "minBalanceValue": "−40k",
+    "description": "1 июля баланс уйдёт в минус. Причина — автоплатёж по ипотеке 30 июня."
+  },
+  "action": {
+    "label": "Как закрыть разрыв"
+  }
+}

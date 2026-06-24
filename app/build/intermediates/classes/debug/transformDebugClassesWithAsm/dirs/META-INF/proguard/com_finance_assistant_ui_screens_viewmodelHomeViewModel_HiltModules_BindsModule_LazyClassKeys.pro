@@ -1,3 +1,9 @@
 -keep,allowobfuscation,allowshrinking class com.finance.assistant.ui.screens.viewmodel.AssistantViewModel
 -keep,allowobfuscation,allowshrinking class com.finance.assistant.ui.screens.viewmodel.AssistantViewModel
+-keep,allowobfuscation,allowshrinking class com.finance.assistant.ui.screens.viewmodel.CashGapViewModel
+-keep,allowobfuscation,allowshrinking class com.finance.assistant.ui.screens.viewmodel.CashGapViewModel
+-keep,allowobfuscation,allowshrinking class com.finance.assistant.ui.screens.viewmodel.FeedViewModel
+-keep,allowobfuscation,allowshrinking class com.finance.assistant.ui.screens.viewmodel.FeedViewModel
+-keep,allowobfuscation,allowshrinking class com.finance.assistant.ui.screens.viewmodel.ForecastViewModel
+-keep,allowobfuscation,allowshrinking class com.finance.assistant.ui.screens.viewmodel.ForecastViewModel
 -keep,allowobfuscation,allowshrinking class com.finance.assistant.ui.screens.viewmodel.HomeViewModel

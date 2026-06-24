@@ -1,0 +1,51 @@
+{
+  "user": {
+    "name": "Артём",
+    "avatarInitial": "А"
+  },
+  "balance": {
+    "freeBalance": 103200.00,
+    "currency": "₽",
+    "shortfallAmount": 40000.00,
+    "shortfallDays": 16,
+    "shortfallDate": "10 июля"
+  },
+  "cashGapAlert": {
+    "title": "Кассовый разрыв через 16 дней",
+    "body": "28–30 июня спишется 112 000 ₽. Не хватит ≈40 000 ₽ до зарплаты.",
+    "isVisible": true
+  },
+  "upcomingEvents": [
+    {
+      "id": 1,
+      "date": "28 июня",
+      "source": "Календарь",
+      "title": "Оплата садика",
+      "amount": -27000.00,
+      "isDangerBorder": false,
+      "colorType": "warning"
+    },
+    {
+      "id": 2,
+      "date": "30 июня",
+      "source": "Почта",
+      "title": "Ипотека",
+      "amount": -85000.00,
+      "isDangerBorder": true,
+      "colorType": "danger"
+    },
+    {
+      "id": 3,
+      "date": "10 июля",
+      "source": "Зарплата",
+      "title": "Поступление",
+      "amount": 180000.00,
+      "isDangerBorder": false,
+      "colorType": "success"
+    }
+  ],
+  "summary": {
+    "totalIncome": 180000.00,
+    "totalExpenses": 112000.00
+  }
+}

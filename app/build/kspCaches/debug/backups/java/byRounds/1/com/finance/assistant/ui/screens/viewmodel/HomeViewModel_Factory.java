@@ -1,8 +1,6 @@
 package com.finance.assistant.ui.screens.viewmodel;
 
-import com.finance.assistant.data.repository.ExpenseRepository;
-import com.finance.assistant.data.repository.InsightRepository;
-import com.finance.assistant.data.repository.TransactionRepository;
+import com.finance.assistant.data.repository.HomeDataRepository;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
 import dagger.internal.QualifierMetadata;
@@ -27,34 +25,23 @@ import javax.inject.Provider;
     "nullness:initialization.field.uninitialized"
 })
 public final class HomeViewModel_Factory implements Factory<HomeViewModel> {
-  private final Provider<TransactionRepository> transactionRepositoryProvider;
+  private final Provider<HomeDataRepository> homeDataRepositoryProvider;
 
-  private final Provider<InsightRepository> insightRepositoryProvider;
-
-  private final Provider<ExpenseRepository> expenseRepositoryProvider;
-
-  public HomeViewModel_Factory(Provider<TransactionRepository> transactionRepositoryProvider,
-      Provider<InsightRepository> insightRepositoryProvider,
-      Provider<ExpenseRepository> expenseRepositoryProvider) {
-    this.transactionRepositoryProvider = transactionRepositoryProvider;
-    this.insightRepositoryProvider = insightRepositoryProvider;
-    this.expenseRepositoryProvider = expenseRepositoryProvider;
+  public HomeViewModel_Factory(Provider<HomeDataRepository> homeDataRepositoryProvider) {
+    this.homeDataRepositoryProvider = homeDataRepositoryProvider;
   }
 
   @Override
   public HomeViewModel get() {
-    return newInstance(transactionRepositoryProvider.get(), insightRepositoryProvider.get(), expenseRepositoryProvider.get());
+    return newInstance(homeDataRepositoryProvider.get());
   }
 
   public static HomeViewModel_Factory create(
-      Provider<TransactionRepository> transactionRepositoryProvider,
-      Provider<InsightRepository> insightRepositoryProvider,
-      Provider<ExpenseRepository> expenseRepositoryProvider) {
-    return new HomeViewModel_Factory(transactionRepositoryProvider, insightRepositoryProvider, expenseRepositoryProvider);
+      Provider<HomeDataRepository> homeDataRepositoryProvider) {
+    return new HomeViewModel_Factory(homeDataRepositoryProvider);
   }
 
-  public static HomeViewModel newInstance(TransactionRepository transactionRepository,
-      InsightRepository insightRepository, ExpenseRepository expenseRepository) {
-    return new HomeViewModel(transactionRepository, insightRepository, expenseRepository);
+  public static HomeViewModel newInstance(HomeDataRepository homeDataRepository) {
+    return new HomeViewModel(homeDataRepository);
   }
 }

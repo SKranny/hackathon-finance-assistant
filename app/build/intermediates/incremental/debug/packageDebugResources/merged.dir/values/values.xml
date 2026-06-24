@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Finance Assistant</string>
-    <style name="Theme.FinanceAssistant" parent="android:Theme.Material.Light.NoActionBar"/>
-</resources>

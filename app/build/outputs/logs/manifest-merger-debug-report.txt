@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:2:1-42:12
-INJECTED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:2:1-42:12
-INJECTED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:2:1-42:12
-INJECTED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:2:1-42:12
+ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:2:1-43:12
+INJECTED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:2:1-43:12
+INJECTED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:2:1-43:12
+INJECTED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:2:1-43:12
 MERGED from [io.objectbox:objectbox-android:3.8.0] C:\Users\Alfa\.gradle\caches\8.11.1\transforms\86d08a5f28ed353318d7aa3d106ef07e\transformed\objectbox-android-3.8.0\AndroidManifest.xml:2:1-8:12
 MERGED from [androidx.work:work-runtime-ktx:2.10.0] C:\Users\Alfa\.gradle\caches\8.11.1\transforms\fcc264de67afc642b8393ff8141fe50f\transformed\work-runtime-ktx-2.10.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.work:work-runtime:2.10.0] C:\Users\Alfa\.gradle\caches\8.11.1\transforms\6b49baebb5921c3b195d1d34312eff75\transformed\work-runtime-2.10.0\AndroidManifest.xml:17:1-145:12
@@ -135,8 +135,8 @@ ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\Androi
 	android:name
 		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:10:22-73
 application
-ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:12:5-40:19
-INJECTED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:12:5-40:19
+ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:12:5-41:19
+INJECTED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:12:5-41:19
 MERGED from [androidx.work:work-runtime:2.10.0] C:\Users\Alfa\.gradle\caches\8.11.1\transforms\6b49baebb5921c3b195d1d34312eff75\transformed\work-runtime-2.10.0\AndroidManifest.xml:28:5-143:19
 MERGED from [androidx.work:work-runtime:2.10.0] C:\Users\Alfa\.gradle\caches\8.11.1\transforms\6b49baebb5921c3b195d1d34312eff75\transformed\work-runtime-2.10.0\AndroidManifest.xml:28:5-143:19
 MERGED from [com.google.android.gms:play-services-mlkit-text-recognition-common:19.0.0] C:\Users\Alfa\.gradle\caches\8.11.1\transforms\b2d49f39c191ded4f56e8cac766e2a28\transformed\play-services-mlkit-text-recognition-common-19.0.0\AndroidManifest.xml:8:5-16:19
@@ -188,41 +188,43 @@ MERGED from [com.google.android.odml:image:1.0.0-beta1] C:\Users\Alfa\.gradle\ca
 	android:allowBackup
 		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:14:9-35
 	android:theme
-		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:19:9-54
+		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:20:9-54
+	android:networkSecurityConfig
+		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:19:9-69
 	android:name
 		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:13:9-44
 activity#com.finance.assistant.MainActivity
-ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:21:9-29:20
+ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:22:9-30:20
 	android:exported
-		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:23:13-36
+		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:24:13-36
 	android:theme
-		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:24:13-58
+		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:25:13-58
 	android:name
-		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:22:13-41
+		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:23:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:25:13-28:29
+ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:26:13-29:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:26:17-69
+ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:27:17-69
 	android:name
-		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:26:25-66
+		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:27:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:27:17-77
+ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:28:17-77
 	android:name
-		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:27:27-74
+		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:28:27-74
 service#com.finance.assistant.service.NotificationInterceptorService
-ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:31:9-38:19
+ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:32:9-39:19
 	android:exported
-		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:33:13-36
+		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:34:13-36
 	android:permission
-		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:34:13-87
+		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:35:13-87
 	android:name
-		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:32:13-67
+		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:33:13-67
 intent-filter#action:name:android.service.notification.NotificationListenerService
-ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:35:13-37:29
+ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:36:13-38:29
 action#android.service.notification.NotificationListenerService
-ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:36:17-99
+ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:37:17-99
 	android:name
-		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:36:25-96
+		ADDED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml:37:25-96
 uses-sdk
 INJECTED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\src\main\AndroidManifest.xml

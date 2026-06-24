@@ -337,6 +337,7 @@ com.finance.assistant:attr/dataPattern = 0x7f030007
 com.finance.assistant:attr/launchSingleTop = 0x7f03001b
 com.finance.assistant:string/m3c_suggestions_available = 0x7f0c004c
 com.finance.assistant:attr/route = 0x7f030027
+com.finance.assistant:xml/network_security_config = 0x7f0f0000
 com.finance.assistant:attr/fontProviderFetchStrategy = 0x7f03000f
 com.finance.assistant:string/m3c_date_picker_navigate_to_year_description = 0x7f0c0031
 com.finance.assistant:attr/fontWeight = 0x7f030016

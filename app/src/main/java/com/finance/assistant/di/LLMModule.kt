@@ -21,8 +21,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object LLMModule {
 
-    private const val DEFAULT_BASE_URL = "http://10.0.2.2:11434"
-    private const val DEFAULT_MODEL = "gemma4"
+    private const val DEFAULT_BASE_URL = "http://127.0.0.1:11434"
+    private const val DEFAULT_MODEL = "gemma4:e2b"
 
     @Provides
     @Singleton
@@ -39,9 +39,9 @@ object LLMModule {
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(300, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(120, TimeUnit.SECONDS)
+            .readTimeout(0, TimeUnit.SECONDS) // Без таймаута для LLM
+            .writeTimeout(120, TimeUnit.SECONDS)
             .retryOnConnectionFailure(true)
             .build()
     }

@@ -3,6 +3,7 @@ package com.finance.assistant.domain.usecase;
 import com.finance.assistant.data.repository.CaseRepository;
 import com.finance.assistant.data.repository.ChatRepository;
 import com.finance.assistant.data.repository.ExpenseRepository;
+import com.finance.assistant.data.repository.LLMRepository;
 import com.finance.assistant.data.repository.UserRepository;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
@@ -38,34 +39,40 @@ public final class AssistantUseCase_Factory implements Factory<AssistantUseCase>
 
   private final Provider<BalanceForecastUseCase> balanceForecastUseCaseProvider;
 
+  private final Provider<LLMRepository> llmRepositoryProvider;
+
   public AssistantUseCase_Factory(Provider<ChatRepository> chatRepositoryProvider,
       Provider<UserRepository> userRepositoryProvider,
       Provider<ExpenseRepository> expenseRepositoryProvider,
       Provider<CaseRepository> caseRepositoryProvider,
-      Provider<BalanceForecastUseCase> balanceForecastUseCaseProvider) {
+      Provider<BalanceForecastUseCase> balanceForecastUseCaseProvider,
+      Provider<LLMRepository> llmRepositoryProvider) {
     this.chatRepositoryProvider = chatRepositoryProvider;
     this.userRepositoryProvider = userRepositoryProvider;
     this.expenseRepositoryProvider = expenseRepositoryProvider;
     this.caseRepositoryProvider = caseRepositoryProvider;
     this.balanceForecastUseCaseProvider = balanceForecastUseCaseProvider;
+    this.llmRepositoryProvider = llmRepositoryProvider;
   }
 
   @Override
   public AssistantUseCase get() {
-    return newInstance(chatRepositoryProvider.get(), userRepositoryProvider.get(), expenseRepositoryProvider.get(), caseRepositoryProvider.get(), balanceForecastUseCaseProvider.get());
+    return newInstance(chatRepositoryProvider.get(), userRepositoryProvider.get(), expenseRepositoryProvider.get(), caseRepositoryProvider.get(), balanceForecastUseCaseProvider.get(), llmRepositoryProvider.get());
   }
 
   public static AssistantUseCase_Factory create(Provider<ChatRepository> chatRepositoryProvider,
       Provider<UserRepository> userRepositoryProvider,
       Provider<ExpenseRepository> expenseRepositoryProvider,
       Provider<CaseRepository> caseRepositoryProvider,
-      Provider<BalanceForecastUseCase> balanceForecastUseCaseProvider) {
-    return new AssistantUseCase_Factory(chatRepositoryProvider, userRepositoryProvider, expenseRepositoryProvider, caseRepositoryProvider, balanceForecastUseCaseProvider);
+      Provider<BalanceForecastUseCase> balanceForecastUseCaseProvider,
+      Provider<LLMRepository> llmRepositoryProvider) {
+    return new AssistantUseCase_Factory(chatRepositoryProvider, userRepositoryProvider, expenseRepositoryProvider, caseRepositoryProvider, balanceForecastUseCaseProvider, llmRepositoryProvider);
   }
 
   public static AssistantUseCase newInstance(ChatRepository chatRepository,
       UserRepository userRepository, ExpenseRepository expenseRepository,
-      CaseRepository caseRepository, BalanceForecastUseCase balanceForecastUseCase) {
-    return new AssistantUseCase(chatRepository, userRepository, expenseRepository, caseRepository, balanceForecastUseCase);
+      CaseRepository caseRepository, BalanceForecastUseCase balanceForecastUseCase,
+      LLMRepository llmRepository) {
+    return new AssistantUseCase(chatRepository, userRepository, expenseRepository, caseRepository, balanceForecastUseCase, llmRepository);
   }
 }

@@ -1,18 +1,22 @@
 [
     {
-        "merged": "com.finance.assistant.app-debug-71:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "com.finance.assistant.app-main-73:/mipmap-anydpi-v26/ic_launcher_round.xml"
+        "merged": "C:\\Users\\Alfa\\.gradle\\daemon\\8.11.1\\com.finance.assistant.app-debug-71:\\drawable_ic_launcher_foreground.xml.flat",
+        "source": "C:\\Users\\Alfa\\.gradle\\daemon\\8.11.1\\com.finance.assistant.app-main-73:\\drawable\\ic_launcher_foreground.xml"
     },
     {
-        "merged": "com.finance.assistant.app-debug-71:/drawable_ic_launcher_background.xml.flat",
-        "source": "com.finance.assistant.app-main-73:/drawable/ic_launcher_background.xml"
+        "merged": "C:\\Users\\Alfa\\.gradle\\daemon\\8.11.1\\com.finance.assistant.app-debug-71:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "C:\\Users\\Alfa\\.gradle\\daemon\\8.11.1\\com.finance.assistant.app-main-73:\\mipmap-anydpi-v26\\ic_launcher.xml"
     },
     {
-        "merged": "com.finance.assistant.app-debug-71:/mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "com.finance.assistant.app-main-73:/mipmap-anydpi-v26/ic_launcher.xml"
+        "merged": "C:\\Users\\Alfa\\.gradle\\daemon\\8.11.1\\com.finance.assistant.app-debug-71:\\drawable_ic_launcher_background.xml.flat",
+        "source": "C:\\Users\\Alfa\\.gradle\\daemon\\8.11.1\\com.finance.assistant.app-main-73:\\drawable\\ic_launcher_background.xml"
     },
     {
-        "merged": "com.finance.assistant.app-debug-71:/drawable_ic_launcher_foreground.xml.flat",
-        "source": "com.finance.assistant.app-main-73:/drawable/ic_launcher_foreground.xml"
+        "merged": "com.finance.assistant.app-debug-71:/xml_network_security_config.xml.flat",
+        "source": "com.finance.assistant.app-main-73:/xml/network_security_config.xml"
+    },
+    {
+        "merged": "C:\\Users\\Alfa\\.gradle\\daemon\\8.11.1\\com.finance.assistant.app-debug-71:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\Alfa\\.gradle\\daemon\\8.11.1\\com.finance.assistant.app-main-73:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
     }
 ]

@@ -1,17 +1,26 @@
 package com.finance.assistant.ui.screens;
 
-@kotlin.Metadata(mv = {1, 9, 0}, k = 2, xi = 48, d1 = {"\u0000\u001e\n\u0000\n\u0002\u0010\u0002\n\u0002\b\u0003\n\u0002\u0010\u000e\n\u0000\n\u0002\u0018\u0002\n\u0002\b\b\n\u0002\u0018\u0002\n\u0000\u001a\b\u0010\u0000\u001a\u00020\u0001H\u0003\u001a\b\u0010\u0002\u001a\u00020\u0001H\u0007\u001aB\u0010\u0003\u001a\u00020\u00012\u0006\u0010\u0004\u001a\u00020\u00052\u0006\u0010\u0006\u001a\u00020\u00072\u0006\u0010\b\u001a\u00020\u00072\u0006\u0010\t\u001a\u00020\u00072\u0006\u0010\n\u001a\u00020\u00052\u0006\u0010\u000b\u001a\u00020\u0005H\u0003\u00f8\u0001\u0000\u00a2\u0006\u0004\b\f\u0010\r\u001a\u0012\u0010\u000e\u001a\u00020\u00012\b\b\u0002\u0010\u000f\u001a\u00020\u0010H\u0003\u0082\u0002\u0007\n\u0005\b\u00a1\u001e0\u0001\u00a8\u0006\u0011"}, d2 = {"FeedHeader", "", "FeedScreen", "InsightCard", "label", "", "labelColor", "Landroidx/compose/ui/graphics/Color;", "iconBackground", "borderColor", "title", "description", "InsightCard-EtIuwbw", "(Ljava/lang/String;JJJLjava/lang/String;Ljava/lang/String;)V", "InsightCardList", "modifier", "Landroidx/compose/ui/Modifier;", "app_debug"})
+@kotlin.Metadata(mv = {1, 9, 0}, k = 2, xi = 48, d1 = {"\u00004\n\u0000\n\u0002\u0010\u0002\n\u0000\n\u0002\u0010\u000e\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0010 \n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0002\u001a\u0018\u0010\u0000\u001a\u00020\u00012\u0006\u0010\u0002\u001a\u00020\u00032\u0006\u0010\u0004\u001a\u00020\u0003H\u0003\u001a\u0012\u0010\u0005\u001a\u00020\u00012\b\b\u0002\u0010\u0006\u001a\u00020\u0007H\u0007\u001a\u0010\u0010\b\u001a\u00020\u00012\u0006\u0010\t\u001a\u00020\nH\u0003\u001a \u0010\u000b\u001a\u00020\u00012\f\u0010\f\u001a\b\u0012\u0004\u0012\u00020\n0\r2\b\b\u0002\u0010\u000e\u001a\u00020\u000fH\u0003\u001a\u0010\u0010\u0010\u001a\u00020\u00112\u0006\u0010\u0012\u001a\u00020\u0003H\u0002\u00a8\u0006\u0013"}, d2 = {"FeedHeader", "", "title", "", "subtitle", "FeedScreen", "viewModel", "Lcom/finance/assistant/ui/screens/viewmodel/FeedViewModel;", "InsightCard", "insight", "Lcom/finance/assistant/data/model/InsightData;", "InsightCardList", "insights", "", "modifier", "Landroidx/compose/ui/Modifier;", "getInsightColors", "Lcom/finance/assistant/ui/screens/InsightColors;", "severity", "app_debug"})
 public final class FeedScreenKt {
     
     @androidx.compose.runtime.Composable()
-    public static final void FeedScreen() {
+    public static final void FeedScreen(@org.jetbrains.annotations.NotNull()
+    com.finance.assistant.ui.screens.viewmodel.FeedViewModel viewModel) {
     }
     
     @androidx.compose.runtime.Composable()
-    private static final void FeedHeader() {
+    private static final void FeedHeader(java.lang.String title, java.lang.String subtitle) {
     }
     
     @androidx.compose.runtime.Composable()
-    private static final void InsightCardList(androidx.compose.ui.Modifier modifier) {
+    private static final void InsightCardList(java.util.List<com.finance.assistant.data.model.InsightData> insights, androidx.compose.ui.Modifier modifier) {
+    }
+    
+    @androidx.compose.runtime.Composable()
+    private static final void InsightCard(com.finance.assistant.data.model.InsightData insight) {
+    }
+    
+    private static final com.finance.assistant.ui.screens.InsightColors getInsightColors(java.lang.String severity) {
+        return null;
     }
 }
