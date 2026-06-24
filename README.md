@@ -223,7 +223,3 @@ app/
 │       ├── screens/           # Screen composables
 │       └── theme/             # Material theme
 ```
-
-## Лицензия
-
-MIT
