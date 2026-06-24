@@ -224,6 +224,3 @@ app/
 │       └── theme/             # Material theme
 ```
 
-## Лицензия
-
-MIT
