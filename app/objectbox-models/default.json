@@ -1,0 +1,273 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:7580490476633018241",
+      "lastPropertyId": "5:5999157557633668685",
+      "name": "ChatMessageEntity",
+      "properties": [
+        {
+          "id": "1:2083541115274303146",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1950582769900845297",
+          "name": "role",
+          "type": 9
+        },
+        {
+          "id": "3:7474981384426234802",
+          "name": "content",
+          "type": 9
+        },
+        {
+          "id": "4:3520989250214834595",
+          "name": "timestamp",
+          "type": 6
+        },
+        {
+          "id": "5:5999157557633668685",
+          "name": "read",
+          "type": 1
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:4688255738345252586",
+      "lastPropertyId": "9:7821139303396120070",
+      "name": "FinanceCaseEntity",
+      "properties": [
+        {
+          "id": "1:1373715542258597584",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:6953308951035250566",
+          "name": "alertType",
+          "type": 9
+        },
+        {
+          "id": "3:7811860474404775330",
+          "name": "title",
+          "type": 9
+        },
+        {
+          "id": "4:7169352407710991549",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "5:8894183847775757025",
+          "name": "dueDate",
+          "type": 6
+        },
+        {
+          "id": "6:4940061023650754131",
+          "name": "amount",
+          "type": 8
+        },
+        {
+          "id": "7:43766722835986219",
+          "name": "severity",
+          "type": 9
+        },
+        {
+          "id": "8:3619591652242101383",
+          "name": "resolved",
+          "type": 1
+        },
+        {
+          "id": "9:7821139303396120070",
+          "name": "additionalData",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:8973164504726740639",
+      "lastPropertyId": "11:8396389082620444662",
+      "name": "RecurringExpenseEntity",
+      "properties": [
+        {
+          "id": "1:6541348620288953565",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7692769504807898472",
+          "name": "title",
+          "type": 9
+        },
+        {
+          "id": "3:8894509394093737897",
+          "name": "amount",
+          "type": 8
+        },
+        {
+          "id": "4:8873406477674536890",
+          "name": "category",
+          "type": 9
+        },
+        {
+          "id": "5:2238257391914189985",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "6:2860354831445540914",
+          "name": "frequency",
+          "type": 9
+        },
+        {
+          "id": "7:4775886134954711161",
+          "name": "startDate",
+          "type": 6
+        },
+        {
+          "id": "8:5445165336455279616",
+          "name": "lastPaidDate",
+          "type": 6
+        },
+        {
+          "id": "9:4814149420193190433",
+          "name": "nextPaymentDate",
+          "type": 6
+        },
+        {
+          "id": "10:8937225986711367499",
+          "name": "isActive",
+          "type": 1
+        },
+        {
+          "id": "11:8396389082620444662",
+          "name": "source",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:843501317711778870",
+      "lastPropertyId": "9:3831509388995106471",
+      "name": "UpcomingExpenseEntity",
+      "properties": [
+        {
+          "id": "1:8774145610849715603",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1461452114527972742",
+          "name": "title",
+          "type": 9
+        },
+        {
+          "id": "3:8583664746521679783",
+          "name": "amount",
+          "type": 8
+        },
+        {
+          "id": "4:3123619140017593500",
+          "name": "dueDate",
+          "type": 6
+        },
+        {
+          "id": "5:2192608203987115699",
+          "name": "category",
+          "type": 9
+        },
+        {
+          "id": "6:4397967553657222011",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "7:4486432093778671770",
+          "name": "isPaid",
+          "type": 1
+        },
+        {
+          "id": "8:8161760101801776888",
+          "name": "source",
+          "type": 9
+        },
+        {
+          "id": "9:3831509388995106471",
+          "name": "notificationSent",
+          "type": 1
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "5:6462985546011878633",
+      "lastPropertyId": "8:2580421471271168557",
+      "name": "UserProfileEntity",
+      "properties": [
+        {
+          "id": "1:3584053942502711358",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2547622239593494839",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:5230371847717966767",
+          "name": "salary",
+          "type": 8
+        },
+        {
+          "id": "4:6636092342169958811",
+          "name": "salaryDay",
+          "type": 5
+        },
+        {
+          "id": "5:5991414077928309346",
+          "name": "balance",
+          "type": 8
+        },
+        {
+          "id": "6:6162561127215679750",
+          "name": "nextSalaryDate",
+          "type": 6
+        },
+        {
+          "id": "7:7496858221309481255",
+          "name": "createdAt",
+          "type": 6
+        },
+        {
+          "id": "8:2580421471271168557",
+          "name": "updatedAt",
+          "type": 6
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "5:6462985546011878633",
+  "lastIndexId": "0:0",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}

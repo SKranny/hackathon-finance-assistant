@@ -1,0 +1,4 @@
+com.finance.assistant.test.app-androidTest-0 C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\build\generated\res\resValues\androidTest\debug
+com.finance.assistant.test.app-mergeDebugAndroidTestResources-1 C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+com.finance.assistant.test.app-mergeDebugAndroidTestResources-2 C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+com.finance.assistant.test.app-debugAndroidTest-3 C:\Users\Alfa\Desktop\hackathon-finance-assistant\app\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources
